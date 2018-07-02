@@ -1,7 +1,5 @@
-// need to add some sort of token locking
-// add events
-// anyone can vote
-// add modifier for valid poll
+// Voting.sol, Andrew Tam
+// NOTE: Anyone can vote and create a poll, prone to Sybil attacks.
 pragma solidity ^0.4.24;
 
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
@@ -10,36 +8,42 @@ import "zeppelin-solidity/contracs/token/ERC20/StandardToken.sol";
 contract Voting {
   using SafeMath for uint256;
 
+  /* EVENTS */
   event voteCasted(address voter, uint256 pollId, bool vote, uint256 weight);
   event pollCreated(uint256 pollId, uint256 quorumPercentage, uint256 votingTime, string description);
 
+  /* POLL */
   struct Poll {
     uint256 revealDate;
     uint256 quorumPercentage;
     uint256 yeaVotes;
     uint256 nayVotes;
-    uint256 numVoters;  // sort of unnecessary
+    uint256 numVoters;  // Currently not used
     string description;
     mapping(address => Voter) voters;
   }
 
-  // use enum in future
+  /* VOTER */
   struct Voter {
     bool hasVoted;
+    // vote will be encrypted in the future
     bool vote;  // false = no, true = yes
     uint256 weight;
   }
 
   mapping(uint256 => Poll) polls;
   uint256 pollCount;
-  StandardToken token;  // not used for now
+  StandardToken token;
 
+  /* CONSTRUCTOR */
   constructor(address _token) public {
     token = StandardToken(_token);
   }
 
-  // well, anyone can create a poll I guess
-  function createPoll(uint256 _quorumPct, uint256 _votingTime, string _description) external returns (pollId) {
+  /*
+   * Creates a new timed poll with a specified quorum percentage. Returns the poll ID of the new poll.
+   */
+  function createPoll(uint256 _quorumPct, uint256 _votingTime, string _description) external returns (uint256 pollId) {
     require(_quorumPct <= 100, "Quorum Percentage must be less than or equal to 100%");
     pollCount++;
     polls[pollCount] = Poll({
@@ -51,21 +55,37 @@ contract Voting {
     return pollCount;
   }
 
-  function isPollPassed(uint256 _pollId) public view returns (bool) {
+  /*
+   * Modifier that checks for a valid poll ID.
+   */
+  modifier validPoll(uint256 _pollId) {
+    require(_pollId > 0 && _pollId <= pollCount, "Not a valid poll Id.");
+    _;
+  }
+
+  /*
+   * Checks if a poll was approved given the quorum percentage.
+   */
+  function isPollPassed(uint256 _pollId) public view validPoll(_pollId) returns (bool pollStatus) {
     require(isPollExpired(_pollId), "Poll has not expired yet.");
     Poll memory curPoll = polls[_pollId];
     return (curPoll.yeaVotes.mul(100)) > curPoll.quorumPercentage.mul(curPoll.yeaVotes.add(curPoll.nayVotes));
   }
 
-  function isPollExpired(uint256 _pollId) public view returns (bool) {
-    require(_pollId > 0 && _pollId <= pollCount, "Not a valid poll Id.");
+  /*
+   * Checks if a poll has expired.
+   */
+  function isPollExpired(uint256 _pollId) public view validPoll(_pollId) returns (bool pollExpired) {
     return (now >= polls[_polldId].revealDate);
   }
 
-  function castVote(uint256 _pollId, bool _voteStatus, uint256 _weight) external {
+  /*
+   * Casts a vote for a given poll. Stakes ERC20 token as votes.
+   */
+  function castVote(uint256 _pollId, bool _voteStatus, uint256 _weight) external validPoll(_pollId) {
     require(!isPollExpired(_pollId), "Poll has expired.")
     require(!userHasVoted(_pollId, msg.sender), "User has already voted.");
-    stakeVotingTokens(_weight);
+    stakeVotingTokens(msg.sender, _weight);
 
     Poll memory curPoll = polls[_pollId];
     if (_voteStatus) {
@@ -85,21 +105,30 @@ contract Voting {
     voteCasted(msg.sender, _pollId, _voteStatus, _weight);
   }
 
-  function userHasVoted(uint256 _pollId, address _user) public view returns (bool) {
+  /*
+   * Checks if a user has voted for a specific poll.
+   */
+  function userHasVoted(uint256 _pollId, address _user) public view validPoll(_pollId) returns (bool hasVoted) {
     return (polls[_pollId].voters[user].hasVoted);
   }
 
   /* Need to figure out token dynamics. */
 
-  // user must approve transfer of tokens
-  // need to add support for adding more tokens
-  function stakeVotingTokens(uint256 _numTokens) internal {
-    require(token.balanceOf(msg.sender) >= _numTokens, "User does not have enough tokens.");
-    require(transferFrom(msg.sender, this, _numTokens), "User did not approve token transfer.");
+  /*
+   * Internal function that stakes tokens for a given voter.
+   * NOTE:
+   *  -User must approve transfer of tokens.
+   *  -Might add support for staking more tokens.
+   */
+  function stakeVotingTokens(address _voter, uint256 _numTokens) internal {
+    require(token.balanceOf(_voter) >= _numTokens, "User does not have enough tokens.");
+    require(transferFrom(_voter, this, _numTokens), "User did not approve token transfer.");
   }
 
-  // very rough
-  function withdrawTokens(uint256 _numTokens, uint256 _pollId) external {
+  /*
+   * Allows a voter to withdraw voting tokens after a poll has ended.
+   */
+  function withdrawTokens(uint256 _numTokens, uint256 _pollId) external validPoll(_pollId) {
     require(isPollExpired(_pollId) && userHasVoted(_pollId, msg.sender), "Poll has not expired or user did not vote in the poll.");
     require(_numTokens <= polls[_pollId].voters[msg.sender].weight, "User is trying to withdraw too many tokens.");
     require(token.transfer(msg.sender, _numTokens));
