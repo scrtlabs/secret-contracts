@@ -2,8 +2,8 @@
 // NOTE: Anyone can vote and create a poll, prone to Sybil attacks.
 pragma solidity ^0.4.24;
 
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
-import "zeppelin-solidity/contracs/token/ERC20/StandardToken.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 
 contract Voting {
   using SafeMath for uint256;
@@ -46,12 +46,13 @@ contract Voting {
   function createPoll(uint256 _quorumPct, uint256 _votingTime, string _description) external returns (uint256 pollId) {
     require(_quorumPct <= 100, "Quorum Percentage must be less than or equal to 100%");
     pollCount++;
-    polls[pollCount] = Poll({
-        revealDate: now.add(_votingTime),
-        quorumPercentage: _quorumPct,
-        description: _description
-    });
-    pollCreated(pollCount, _quorumPct, _votingTime, _description);
+
+    Poll storage curPoll = polls[pollCount];
+    curPoll.revealDate = now.add(_votingTime);
+    curPoll.quorumPercentage = _quorumPct;
+    curPoll.description = _description;
+
+    emit pollCreated(pollCount, _quorumPct, _votingTime, _description);
     return pollCount;
   }
 
@@ -76,18 +77,18 @@ contract Voting {
    * Checks if a poll has expired.
    */
   function isPollExpired(uint256 _pollId) public view validPoll(_pollId) returns (bool pollExpired) {
-    return (now >= polls[_polldId].revealDate);
+    return (now >= polls[_pollId].revealDate);
   }
 
   /*
    * Casts a vote for a given poll. Stakes ERC20 token as votes.
    */
   function castVote(uint256 _pollId, bool _voteStatus, uint256 _weight) external validPoll(_pollId) {
-    require(!isPollExpired(_pollId), "Poll has expired.")
+    require(!isPollExpired(_pollId), "Poll has expired.");
     require(!userHasVoted(_pollId, msg.sender), "User has already voted.");
     stakeVotingTokens(msg.sender, _weight);
 
-    Poll memory curPoll = polls[_pollId];
+    Poll storage curPoll = polls[_pollId];
     if (_voteStatus) {
       curPoll.yeaVotes = curPoll.yeaVotes.add(_weight);
     }
@@ -102,14 +103,14 @@ contract Voting {
     });
 
     curPoll.numVoters++;
-    voteCasted(msg.sender, _pollId, _voteStatus, _weight);
+    emit voteCasted(msg.sender, _pollId, _voteStatus, _weight);
   }
 
   /*
    * Checks if a user has voted for a specific poll.
    */
   function userHasVoted(uint256 _pollId, address _user) public view validPoll(_pollId) returns (bool hasVoted) {
-    return (polls[_pollId].voters[user].hasVoted);
+    return (polls[_pollId].voters[_user].hasVoted);
   }
 
   /* Need to figure out token dynamics. */
@@ -122,7 +123,7 @@ contract Voting {
    */
   function stakeVotingTokens(address _voter, uint256 _numTokens) internal {
     require(token.balanceOf(_voter) >= _numTokens, "User does not have enough tokens.");
-    require(transferFrom(_voter, this, _numTokens), "User did not approve token transfer.");
+    require(token.transferFrom(_voter, this, _numTokens), "User did not approve token transfer.");
   }
 
   /*
