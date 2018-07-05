@@ -3,7 +3,7 @@
 pragma solidity ^0.4.24;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
+import "./VotingToken.sol";
 
 contract Voting {
   using SafeMath for uint256;
@@ -31,13 +31,13 @@ contract Voting {
     uint256 weight;
   }
 
-  mapping(uint256 => Poll) polls;
-  uint256 pollCount;
-  StandardToken token;
+  mapping(uint256 => Poll) public polls;
+  uint256 public pollCount;
+  VotingToken public token;
 
   /* CONSTRUCTOR */
   constructor(address _token) public {
-    token = StandardToken(_token);
+    token = VotingToken(_token);
   }
 
   /*
