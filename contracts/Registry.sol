@@ -7,6 +7,7 @@ import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "./VotingToken.sol";
 
 contract Registry {
+  /*
   using SafeMath for uint;
 
   struct Listing {
@@ -32,5 +33,6 @@ contract Registry {
     voting = Voting(_voting);
     name = _name;
   }
+  */
 
 }

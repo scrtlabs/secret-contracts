@@ -25,12 +25,16 @@ contract TokenFactory {
    * Allow a user to pay for voting tokens.
    */
   function contribute() external payable {
-    require(msg.value > 0);
+    require(msg.value > 0, "User sent no ether.");
     token.transfer(owner, msg.value);  // transfer the Ether to the owner
     uint256 amount = msg.value * 10;  // define an arbitrary exchange rate
     token.mint(msg.sender, amount);  // mint tokens
     totalMinted += amount;
-    Contribution(msg.sender, amount);
+    emit Contribution(msg.sender, amount);
+  }
+
+  function () payable {
+    revert();
   }
 
 }
