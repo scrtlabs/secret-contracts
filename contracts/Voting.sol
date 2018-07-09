@@ -81,7 +81,8 @@ contract Voting {
   }
 
   /*
-   * Casts a vote for a given poll. Stakes ERC20 token as votes.
+   * Casts a vote for a given poll. Stakes ERC20 tokens as votes.
+   * NOTE: _weight is denominated in *wei*.
    */
   function castVote(uint256 _pollId, bool _voteStatus, uint256 _weight) external validPoll(_pollId) {
     require(!isPollExpired(_pollId), "Poll has expired.");
@@ -118,16 +119,18 @@ contract Voting {
   /*
    * Internal function that stakes tokens for a given voter.
    * NOTE:
-   *  -User must approve transfer of tokens.
-   *  -Might add support for staking more tokens.
+   *  User must approve transfer of tokens.
+   *  _numTokens is denominated in *wei*.
+   *  Might add support for staking more tokens.
    */
   function stakeVotingTokens(address _voter, uint256 _numTokens) internal {
-    require(token.balanceOf(_voter) >= _numTokens, "User does not have enough tokens.");
+    require(token.balanceOf(_voter) >= _numTokens, "User does not have enough tokens");
     require(token.transferFrom(_voter, this, _numTokens), "User did not approve token transfer.");
   }
 
   /*
    * Allows a voter to withdraw voting tokens after a poll has ended.
+   * NOTE: _numTokens is denominated in *wei*.
    */
   function withdrawTokens(uint256 _numTokens, uint256 _pollId) external validPoll(_pollId) {
     require(isPollExpired(_pollId) && userHasVoted(_pollId, msg.sender), "Poll has not expired or user did not vote in the poll.");

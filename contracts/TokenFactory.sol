@@ -26,14 +26,14 @@ contract TokenFactory {
    */
   function contribute() external payable {
     require(msg.value > 0, "User sent no ether.");
-    token.transfer(owner, msg.value);  // transfer the Ether to the owner
+    owner.transfer(msg.value);  // transfer the Ether to the owner
     uint256 amount = msg.value * 10;  // define an arbitrary exchange rate
     token.mint(msg.sender, amount);  // mint tokens
     totalMinted += amount;
     emit Contribution(msg.sender, amount);
   }
 
-  function () payable {
+  function() external payable {
     revert();
   }
 

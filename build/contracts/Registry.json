@@ -1,24 +1,24 @@
 {
   "contractName": "Registry",
   "abi": [],
-  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3006080604052600080fd00a165627a7a72305820ffea5c7d1febb6d1ad98d210da05c85d4562aabb8b525e603c5c5c78c9fc06f40029",
-  "deployedBytecode": "0x6080604052600080fd00a165627a7a72305820ffea5c7d1febb6d1ad98d210da05c85d4562aabb8b525e603c5c5c78c9fc06f40029",
-  "sourceMap": "167:539:1:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;167:539:1;;;;;;;",
-  "deployedSourceMap": "167:539:1:-;;;;;",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3006080604052600080fd00a165627a7a723058201992abb6cf1caa39e06cb457332ccd8984a2af8b9c5fb20364843eb15122b5c90029",
+  "deployedBytecode": "0x6080604052600080fd00a165627a7a723058201992abb6cf1caa39e06cb457332ccd8984a2af8b9c5fb20364843eb15122b5c90029",
+  "sourceMap": "167:539:0:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;167:539:0;;;;;;;",
+  "deployedSourceMap": "167:539:0:-;;;;;",
   "source": "// Andrew Tam, Registry.sol\n\npragma solidity ^0.4.24;\n\nimport \"./Voting.sol\";\nimport \"openzeppelin-solidity/contracts/math/SafeMath.sol\";\nimport \"./VotingToken.sol\";\n\ncontract Registry {\n  /*\n  using SafeMath for uint;\n\n  struct Listing {\n    string description;\n    uint listingId;\n  }\n\n  struct Challenge {\n\n  }\n\n  // initialized in constructor\n  VotingToken public token;\n  Voting public voting;\n  string public name;\n\n  // holds state of registry\n  mapping(uint => Challenge) public challenges;\n  mapping(uint => Listing) public listings;\n\n  constructor(address _token, address _voting, string _name) public {\n    token = VotingToken(_token);\n    voting = Voting(_voting);\n    name = _name;\n  }\n  */\n\n}\n",
   "sourcePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/Registry.sol",
   "ast": {
     "absolutePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/Registry.sol",
     "exportedSymbols": {
       "Registry": [
-        8
+        5
       ]
     },
-    "id": 9,
+    "id": 6,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 4,
+        "id": 1,
         "literals": [
           "solidity",
           "^",
@@ -26,38 +26,38 @@
           ".24"
         ],
         "nodeType": "PragmaDirective",
-        "src": "29:24:1"
+        "src": "29:24:0"
       },
       {
         "absolutePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/Voting.sol",
         "file": "./Voting.sol",
-        "id": 5,
+        "id": 2,
         "nodeType": "ImportDirective",
-        "scope": 9,
-        "sourceUnit": 484,
-        "src": "55:22:1",
+        "scope": 6,
+        "sourceUnit": 392,
+        "src": "55:22:0",
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
         "absolutePath": "openzeppelin-solidity/contracts/math/SafeMath.sol",
         "file": "openzeppelin-solidity/contracts/math/SafeMath.sol",
-        "id": 6,
+        "id": 3,
         "nodeType": "ImportDirective",
-        "scope": 9,
-        "sourceUnit": 593,
-        "src": "78:59:1",
+        "scope": 6,
+        "sourceUnit": 501,
+        "src": "78:59:0",
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
         "absolutePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/VotingToken.sol",
         "file": "./VotingToken.sol",
-        "id": 7,
+        "id": 4,
         "nodeType": "ImportDirective",
-        "scope": 9,
-        "sourceUnit": 499,
-        "src": "138:27:1",
+        "scope": 6,
+        "sourceUnit": 407,
+        "src": "138:27:0",
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -67,31 +67,31 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 8,
+        "id": 5,
         "linearizedBaseContracts": [
-          8
+          5
         ],
         "name": "Registry",
         "nodeType": "ContractDefinition",
         "nodes": [],
-        "scope": 9,
-        "src": "167:539:1"
+        "scope": 6,
+        "src": "167:539:0"
       }
     ],
-    "src": "29:678:1"
+    "src": "29:678:0"
   },
   "legacyAST": {
     "absolutePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/Registry.sol",
     "exportedSymbols": {
       "Registry": [
-        8
+        5
       ]
     },
-    "id": 9,
+    "id": 6,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 4,
+        "id": 1,
         "literals": [
           "solidity",
           "^",
@@ -99,38 +99,38 @@
           ".24"
         ],
         "nodeType": "PragmaDirective",
-        "src": "29:24:1"
+        "src": "29:24:0"
       },
       {
         "absolutePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/Voting.sol",
         "file": "./Voting.sol",
-        "id": 5,
+        "id": 2,
         "nodeType": "ImportDirective",
-        "scope": 9,
-        "sourceUnit": 484,
-        "src": "55:22:1",
+        "scope": 6,
+        "sourceUnit": 392,
+        "src": "55:22:0",
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
         "absolutePath": "openzeppelin-solidity/contracts/math/SafeMath.sol",
         "file": "openzeppelin-solidity/contracts/math/SafeMath.sol",
-        "id": 6,
+        "id": 3,
         "nodeType": "ImportDirective",
-        "scope": 9,
-        "sourceUnit": 593,
-        "src": "78:59:1",
+        "scope": 6,
+        "sourceUnit": 501,
+        "src": "78:59:0",
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
         "absolutePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/VotingToken.sol",
         "file": "./VotingToken.sol",
-        "id": 7,
+        "id": 4,
         "nodeType": "ImportDirective",
-        "scope": 9,
-        "sourceUnit": 499,
-        "src": "138:27:1",
+        "scope": 6,
+        "sourceUnit": 407,
+        "src": "138:27:0",
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -140,18 +140,18 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 8,
+        "id": 5,
         "linearizedBaseContracts": [
-          8
+          5
         ],
         "name": "Registry",
         "nodeType": "ContractDefinition",
         "nodes": [],
-        "scope": 9,
-        "src": "167:539:1"
+        "scope": 6,
+        "src": "167:539:0"
       }
     ],
-    "src": "29:678:1"
+    "src": "29:678:0"
   },
   "compiler": {
     "name": "solc",
@@ -159,5 +159,5 @@
   },
   "networks": {},
   "schemaVersion": "2.0.1",
-  "updatedAt": "2018-07-05T23:02:33.138Z"
+  "updatedAt": "2018-07-06T22:51:06.631Z"
 }

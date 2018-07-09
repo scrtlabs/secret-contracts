@@ -15,4 +15,7 @@ module.exports = function(deployer) {
     .then(() => {
       return deployer.deploy(Voting, VotingToken.address);
     })
+    .then(() => {
+      return VotingToken.deployed().then(instance => instance.transferOwnership(TokenFactory.address))
+    })
 };
