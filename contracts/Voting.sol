@@ -114,8 +114,6 @@ contract Voting {
     return (polls[_pollId].voters[_user].hasVoted);
   }
 
-  /* Need to figure out token dynamics. */
-
   /*
    * Internal function that stakes tokens for a given voter.
    * NOTE:
