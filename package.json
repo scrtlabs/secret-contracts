@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "js-linguist": "0.0.0",
     "openzeppelin-solidity": "^1.10.0",
     "zeppelin-solidity": "1.10.0"
   },

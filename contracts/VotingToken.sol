@@ -2,7 +2,7 @@
 // VotingToken is an OpenZeppelin MintableToken that will act as a
 // voting token in our set of voting systems.
 
-pragma solidity ^0.4.24;
+pragma solidity ^0.4.24; 
 
 import "openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
 

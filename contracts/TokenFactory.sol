@@ -1,7 +1,7 @@
 // Andrew Tam, TokenFactory.sol
 // Allow the voting tokens to be minted from a simple crowdsale.
 
-pragma solidity ^0.4.24;
+pragma solidity ^0.4.24; 
 
 import "./VotingToken.sol";
 
