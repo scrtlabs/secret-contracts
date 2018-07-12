@@ -7,15 +7,17 @@ const ContextDependency = require("./ContextDependency");
 const ContextDependencyTemplateAsRequireCall = require("./ContextDependencyTemplateAsRequireCall");
 
 class ImportContextDependency extends ContextDependency {
-	constructor(options, range, valueRange) {
-		super(options);
+	constructor(request, recursive, regExp, range, valueRange, chunkName) {
+		super(request, recursive, regExp);
 		this.range = range;
 		this.valueRange = valueRange;
+		this.chunkName = chunkName;
 	}
 
 	get type() {
-		return `import() context ${this.options.mode}`;
+		return "import() context";
 	}
+
 }
 
 ImportContextDependency.Template = ContextDependencyTemplateAsRequireCall;

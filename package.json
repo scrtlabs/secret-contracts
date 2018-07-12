@@ -7,27 +7,40 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack -p",
+    "start": "webpack-dev-server --hot --inline --content-base ./public"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "js-linguist": "0.0.0",
-    "openzeppelin-solidity": "^1.10.0",
-    "zeppelin-solidity": "1.10.0"
-  },
-  "devDependencies": {
+    "add": "^2.0.6",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
-    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
-    "css-loader": "^0.28.11",
+    "babel-preset-stage-2": "^6.24.1",
+    "bootstrap": "~3",
+    "css-loader": "^0.28.4",
+    "eth-crypto": "^1.2.2",
+    "exec": "^0.2.1",
+    "js-linguist": "0.0.0",
     "json-loader": "^0.5.7",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1",
-    "style-loader": "^0.21.0",
-    "web3": "^0.20.6",
-    "webpack": "^4.15.1"
+    "openzeppelin-solidity": "^1.10.0",
+    "react": "^15.6.2",
+    "react-dom": "^15.6.2",
+    "rlp": "^2.1.0",
+    "style-loader": "^0.18.2",
+    "truffle": "^3.4.8",
+    "truffle-contract": "^3.0.6",
+    "web": "0.0.2",
+    "web3": "^0.20.0",
+    "webpack": "^3.12.0",
+    "webpack-dev-server": "^2.11.1"
+  },
+  "devDependencies": {
+    "webpack-cli": "^3.0.8",
+    "yarn": "^1.7.0"
   }
 }

@@ -7,8 +7,8 @@ const ContextDependency = require("./ContextDependency");
 const ContextDependencyTemplateAsRequireCall = require("./ContextDependencyTemplateAsRequireCall");
 
 class CommonJsRequireContextDependency extends ContextDependency {
-	constructor(options, range, valueRange) {
-		super(options);
+	constructor(request, recursive, regExp, range, valueRange) {
+		super(request, recursive, regExp);
 		this.range = range;
 		this.valueRange = valueRange;
 	}
@@ -16,6 +16,7 @@ class CommonJsRequireContextDependency extends ContextDependency {
 	get type() {
 		return "cjs require context";
 	}
+
 }
 
 CommonJsRequireContextDependency.Template = ContextDependencyTemplateAsRequireCall;

@@ -6,6 +6,8 @@
 var Voting = artifacts.require("./Voting.sol");
 var VotingToken = artifacts.require("./VotingToken.sol");
 var TokenFactory = artifacts.require("./TokenFactory.sol");
+var Enigma = artifacts.require("./Enigma.sol");
+var EnigmaToken = artifacts.require("./EnigmaToken.sol");
 const sleep = require('util').promisify(setTimeout)
 
 contract('Voting', async(accounts) => {
@@ -49,9 +51,15 @@ contract('TokenFactory', async(accounts) => {
       const hasVoted = await voting.userHasVoted(1, web3.eth.accounts[1]);
       assert.equal(hasVoted, true, "User vote boolean did not change.");
 
+
       // 5. Withdraw tokens.
       // NOTE: Change withdrawal amount for testing.
       await sleep(1000);
+      const enigma = await Enigma.deployed();
+
+
+
+
       const passed = await voting.isPollPassed(1);
       assert.equal(passed, true, "Poll was not passed.");
       await voting.withdrawTokens(web3.toWei(10, "ether"), 1, {from: web3.eth.accounts[1]});

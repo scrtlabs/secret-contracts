@@ -7,8 +7,8 @@ const ContextDependency = require("./ContextDependency");
 const ContextDependencyTemplateAsId = require("./ContextDependencyTemplateAsId");
 
 class RequireResolveContextDependency extends ContextDependency {
-	constructor(options, range, valueRange) {
-		super(options);
+	constructor(request, recursive, regExp, range, valueRange) {
+		super(request, recursive, regExp);
 		this.range = range;
 		this.valueRange = valueRange;
 	}
@@ -16,6 +16,7 @@ class RequireResolveContextDependency extends ContextDependency {
 	get type() {
 		return "amd require context";
 	}
+
 }
 
 RequireResolveContextDependency.Template = ContextDependencyTemplateAsId;

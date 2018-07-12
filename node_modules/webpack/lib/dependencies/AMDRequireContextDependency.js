@@ -6,8 +6,8 @@
 
 const ContextDependency = require("./ContextDependency");
 class AMDRequireContextDependency extends ContextDependency {
-	constructor(options, range, valueRange) {
-		super(options);
+	constructor(request, recursive, regExp, range, valueRange) {
+		super(request, recursive, regExp);
 		this.range = range;
 		this.valueRange = valueRange;
 	}

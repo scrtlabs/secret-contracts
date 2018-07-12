@@ -1,46 +1,42 @@
 "use strict";
 
-/**
- * @template T
- */
-class Queue {
-	/**
-	 * @param {Iterable<T>=} items The initial elements.
-	 */
+module.exports = class Queue {
 	constructor(items) {
-		/** @private @type {Set<T>} */
-		this.set = new Set(items);
-		/** @private @type {Iterator<T>} */
-		this.iterator = this.set[Symbol.iterator]();
+		this.first = null;
+		this.last = null;
+		this.length = 0;
+		if(items) {
+			for(const item of items) {
+				this.enqueue(item);
+			}
+		}
 	}
 
-	/**
-	 * Returns the number of elements in this queue.
-	 * @returns {number} The number of elements in this queue.
-	 */
-	get length() {
-		return this.set.size;
-	}
-
-	/**
-	 * Appends the specified element to this queue.
-	 * @param {T} item The element to add.
-	 * @returns {void}
-	 */
 	enqueue(item) {
-		this.set.add(item);
+		const first = this.first;
+		const node = {
+			item,
+			next: null
+		};
+		if(first === null) {
+			this.last = node;
+		} else {
+			first.next = node;
+		}
+		this.first = node;
+		this.length++;
 	}
 
-	/**
-	 * Retrieves and removes the head of this queue.
-	 * @returns {T | undefined} The head of the queue of `undefined` if this queue is empty.
-	 */
 	dequeue() {
-		const result = this.iterator.next();
-		if (result.done) return undefined;
-		this.set.delete(result.value);
-		return result.value;
+		const last = this.last;
+		if(last === null)
+			return undefined;
+		const next = last.next;
+		if(next === null) {
+			this.first = null;
+		}
+		this.last = next;
+		this.length--;
+		return last.item;
 	}
-}
-
-module.exports = Queue;
+};

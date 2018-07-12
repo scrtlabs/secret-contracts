@@ -1,16 +1,18 @@
 // Voting.sol, Andrew Tam
 // NOTE: Anyone can vote and create a poll, prone to Sybil attacks.
-pragma solidity ^0.4.24; 
+pragma solidity ^0.4.24;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "./VotingToken.sol";
+import "./Enigma.sol";
 
 contract Voting {
   using SafeMath for uint256;
 
   /* EVENTS */
-  event voteCasted(address voter, uint256 pollId, bool vote, uint256 weight);
+  event voteCasted(address voter, uint256 pollId, uint256 vote, uint256 weight);
   event pollCreated(uint256 pollId, uint256 quorumPercentage, uint256 votingTime, string description);
+  event pollPassed(bool status);
 
   /* POLL */
   struct Poll {
@@ -27,17 +29,19 @@ contract Voting {
   struct Voter {
     bool hasVoted;
     // vote will be encrypted in the future
-    bool vote;  // false = no, true = yes
+    uint256 vote;  // false = no, true = yes
     uint256 weight;
   }
 
   mapping(uint256 => Poll) public polls;
   uint256 public pollCount;
   VotingToken public token;
+  Enigma public enigma;
 
   /* CONSTRUCTOR */
-  constructor(address _token) public {
+  constructor(address _token, address _enigmaAddress) public {
     token = VotingToken(_token);
+    enigma = Enigma(_enigmaAddress);
   }
 
   /*
@@ -64,13 +68,24 @@ contract Voting {
     _;
   }
 
+  modifier onlyEnigma() {
+    require(msg.sender == address(enigma));
+    _;
+  }
+
   /*
    * Checks if a poll was approved given the quorum percentage.
    */
-  function isPollPassed(uint256 _pollId) public view validPoll(_pollId) returns (bool pollStatus) {
+  function isPollPassed(uint256 _pollId, uint256 _yeaVotes, uint256 _nayVotes) public validPoll(_pollId) onlyEnigma() returns (bool pollStatus) {
     require(isPollExpired(_pollId), "Poll has not expired yet.");
     Poll memory curPoll = polls[_pollId];
-    return (curPoll.yeaVotes.mul(100)) > curPoll.quorumPercentage.mul(curPoll.yeaVotes.add(curPoll.nayVotes));
+    curPoll.yeaVotes = _yeaVotes;
+    curPoll.nayVotes = _nayVotes;
+
+    bool status = (curPoll.yeaVotes.mul(100)) > curPoll.quorumPercentage.mul(curPoll.yeaVotes.add(curPoll.nayVotes));
+
+    emit pollPassed(status);
+    return status;
   }
 
   /*
@@ -81,30 +96,35 @@ contract Voting {
   }
 
   /*
+   * The callable function that is computed by the SGX node.
+   */
+  function countVotes(uint256 _pollId, uint256[] votes, uint256[] weights) public pure returns (uint256 pollId, uint256 yeaVotes, uint256 nayVotes) {
+    for (uint256 i = 0; i < votes.length; i++) {
+      if (votes[i] == 0) nayVotes += weights[i];
+      else yeaVotes += weights[i];
+    }
+    return (_pollId, yeaVotes, nayVotes);
+  }
+
+  /*
    * Casts a vote for a given poll. Stakes ERC20 tokens as votes.
    * NOTE: _weight is denominated in *wei*.
    */
-  function castVote(uint256 _pollId, bool _voteStatus, uint256 _weight) external validPoll(_pollId) {
+  function castVote(uint256 _pollId, uint256 _encryptedVote, uint256 _weight) external validPoll(_pollId) {
     require(!isPollExpired(_pollId), "Poll has expired.");
     require(!userHasVoted(_pollId, msg.sender), "User has already voted.");
     stakeVotingTokens(msg.sender, _weight);
 
     Poll storage curPoll = polls[_pollId];
-    if (_voteStatus) {
-      curPoll.yeaVotes = curPoll.yeaVotes.add(_weight);
-    }
-    else {
-      curPoll.nayVotes = curPoll.nayVotes.add(_weight);
-    }
 
     curPoll.voters[msg.sender] = Voter({
         hasVoted: true,
-        vote: _voteStatus,
+        vote: _encryptedVote,
         weight: _weight
     });
 
     curPoll.numVoters++;
-    emit voteCasted(msg.sender, _pollId, _voteStatus, _weight);
+    emit voteCasted(msg.sender, _pollId, _encryptedVote, _weight);
   }
 
   /*
