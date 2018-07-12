@@ -11,12 +11,16 @@ contract Voting {
 
   /* EVENTS */
   event voteCasted(address voter, uint256 pollId, uint256 vote, uint256 weight);
-  event pollCreated(uint256 pollId, uint256 quorumPercentage, uint256 votingTime, string description);
+  event pollCreated(uint256 pollId, uint256 quorumPercentage, address creator, string description);
   event pollPassed(bool status);
+
+  /* Determine the current state of a poll */
+  enum PollStatus { IN_PROGRESS, TALLY, PASSED, REJECTED }
 
   /* POLL */
   struct Poll {
-    uint256 revealDate;
+    address creator;
+    PollStatus status;
     uint256 quorumPercentage;
     uint256 yeaVotes;
     uint256 nayVotes;
@@ -29,7 +33,7 @@ contract Voting {
   struct Voter {
     bool hasVoted;
     // vote will be encrypted in the future
-    uint256 vote;  // false = no, true = yes
+    uint256 vote;
     uint256 weight;
   }
 
@@ -45,19 +49,25 @@ contract Voting {
   }
 
   /*
-   * Creates a new timed poll with a specified quorum percentage. Returns the poll ID of the new poll.
+   * Creates a new poll with a specified quorum percentage. Returns the poll ID of the new poll.
    */
-  function createPoll(uint256 _quorumPct, uint256 _votingTime, string _description) external returns (uint256 pollId) {
+  function createPoll(uint256 _quorumPct, string _description) external {
     require(_quorumPct <= 100, "Quorum Percentage must be less than or equal to 100%");
     pollCount++;
 
     Poll storage curPoll = polls[pollCount];
-    curPoll.revealDate = now.add(_votingTime);
+    curPoll.creator = msg.sender;
+    curPoll.status = PollStatus.IN_PROGRESS;
     curPoll.quorumPercentage = _quorumPct;
     curPoll.description = _description;
 
-    emit pollCreated(pollCount, _quorumPct, _votingTime, _description);
-    return pollCount;
+    emit pollCreated(pollCount, _quorumPct, msg.sender, _description);
+  }
+
+  function endPoll(uint256 _pollId) public validPoll(_pollId) {
+    require(msg.sender == polls[_pollId].creator, "User is not the creator of the poll.");
+    require(polls[_pollId].status == PollStatus.IN_PROGRESS, "Vote is not in progress.");
+    polls[_pollId].status = PollStatus.TALLY;
   }
 
   /*
@@ -68,37 +78,49 @@ contract Voting {
     _;
   }
 
+  /*
+   * Checks if a poll was approved given the quorum percentage.
+   * URGENT NOTE: The onlyEnigma modifier is currently commented out.
+   */
+  function updatePollStatus(uint256 _pollId, uint256 _yeaVotes, uint256 _nayVotes) public validPoll(_pollId)
+    // onlyEnigma() /* Add back for final launch */
+      {
+    require(getPollStatus(_pollId) == PollStatus.TALLY, "Poll has not expired yet.");
+    Poll storage curPoll = polls[_pollId];
+    curPoll.yeaVotes = _yeaVotes;
+    curPoll.nayVotes = _nayVotes;
+
+    bool pollStatus = (curPoll.yeaVotes.mul(100)) > curPoll.quorumPercentage.mul(curPoll.yeaVotes.add(curPoll.nayVotes));
+    if (pollStatus) {
+      curPoll.status = PollStatus.PASSED;
+    }
+    else {
+      curPoll.status = PollStatus.REJECTED;
+    }
+
+    emit pollPassed(pollStatus);
+  }
+
+  /*
+   * Gets the status of a poll.
+   */
+  function getPollStatus(uint256 _pollId) public view validPoll(_pollId) returns (PollStatus status) {
+    return polls[_pollId].status;
+  }
+
+  /*
+   * Modifier that checks that the contract caller is the Enigma contract.
+   */
   modifier onlyEnigma() {
     require(msg.sender == address(enigma));
     _;
   }
 
   /*
-   * Checks if a poll was approved given the quorum percentage.
-   */
-  function isPollPassed(uint256 _pollId, uint256 _yeaVotes, uint256 _nayVotes) public validPoll(_pollId) onlyEnigma() returns (bool pollStatus) {
-    require(isPollExpired(_pollId), "Poll has not expired yet.");
-    Poll memory curPoll = polls[_pollId];
-    curPoll.yeaVotes = _yeaVotes;
-    curPoll.nayVotes = _nayVotes;
-
-    bool status = (curPoll.yeaVotes.mul(100)) > curPoll.quorumPercentage.mul(curPoll.yeaVotes.add(curPoll.nayVotes));
-
-    emit pollPassed(status);
-    return status;
-  }
-
-  /*
-   * Checks if a poll has expired.
-   */
-  function isPollExpired(uint256 _pollId) public view validPoll(_pollId) returns (bool pollExpired) {
-    return (now >= polls[_pollId].revealDate);
-  }
-
-  /*
    * The callable function that is computed by the SGX node.
    */
   function countVotes(uint256 _pollId, uint256[] votes, uint256[] weights) public pure returns (uint256 pollId, uint256 yeaVotes, uint256 nayVotes) {
+    assert(votes.length == weights.length);
     for (uint256 i = 0; i < votes.length; i++) {
       if (votes[i] == 0) nayVotes += weights[i];
       else yeaVotes += weights[i];
@@ -111,7 +133,7 @@ contract Voting {
    * NOTE: _weight is denominated in *wei*.
    */
   function castVote(uint256 _pollId, uint256 _encryptedVote, uint256 _weight) external validPoll(_pollId) {
-    require(!isPollExpired(_pollId), "Poll has expired.");
+    require(getPollStatus(_pollId) == PollStatus.IN_PROGRESS, "Poll has expired.");
     require(!userHasVoted(_pollId, msg.sender), "User has already voted.");
     stakeVotingTokens(msg.sender, _weight);
 
@@ -151,7 +173,8 @@ contract Voting {
    * NOTE: _numTokens is denominated in *wei*.
    */
   function withdrawTokens(uint256 _numTokens, uint256 _pollId) external validPoll(_pollId) {
-    require(isPollExpired(_pollId) && userHasVoted(_pollId, msg.sender), "Poll has not expired or user did not vote in the poll.");
+    require(getPollStatus(_pollId) == PollStatus.REJECTED ||  getPollStatus(_pollId) == PollStatus.PASSED, "Poll has not expired.");
+    require(userHasVoted(_pollId, msg.sender), "User did not vote in the poll.");
     require(_numTokens <= polls[_pollId].voters[msg.sender].weight, "User is trying to withdraw too many tokens.");
     require(token.transfer(msg.sender, _numTokens));
   }
