@@ -1,5 +1,6 @@
 // Voting.sol, Andrew Tam
 // NOTE: Anyone can vote and create a poll, prone to Sybil attacks.
+// Also, note that the creator of a poll can vote in the poll itself.
 pragma solidity ^0.4.24;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";

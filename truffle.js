@@ -18,6 +18,11 @@ module.exports = {
       host: "localhost",
       port: 7545,
       network_id: "*"
+    },
+    ganache_remote: {
+      host: "ibm.enigma.co",
+      port: 10000,
+      network_id: "1"
     }
   }
 };

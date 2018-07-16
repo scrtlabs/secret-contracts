@@ -11,7 +11,6 @@ class App extends Component {
       numPolls: 0,
       web3: null
     }
-
   }
 
   componentWillMount() {
