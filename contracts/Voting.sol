@@ -85,8 +85,9 @@ contract Voting {
    */
   function updatePollStatus(uint256 _pollId, uint256 _yeaVotes, uint256 _nayVotes) public validPoll(_pollId)
     // onlyEnigma() /* Add back for final launch */
+    returns (bool)
       {
-    require(getPollStatus(_pollId) == PollStatus.TALLY, "Poll has not expired yet.");
+    /* require(getPollStatus(_pollId) == PollStatus.TALLY, "Poll has not expired yet.");
     Poll storage curPoll = polls[_pollId];
     curPoll.yeaVotes = _yeaVotes;
     curPoll.nayVotes = _nayVotes;
@@ -100,6 +101,9 @@ contract Voting {
     }
 
     emit pollPassed(pollStatus);
+    return pollStatus */
+    emit pollPassed(true);
+    return true;
   }
 
   /*
@@ -120,11 +124,11 @@ contract Voting {
   /*
    * The callable function that is computed by the SGX node.
    */
-  function countVotes(uint256 _pollId, uint256[] votes, uint256[] weights) public pure returns (uint256 pollId, uint256 yeaVotes, uint256 nayVotes) {
-    assert(votes.length == weights.length);
-    for (uint256 i = 0; i < votes.length; i++) {
-      if (votes[i] == 0) nayVotes += weights[i];
-      else yeaVotes += weights[i];
+  function countVotes(uint256 _pollId, uint256[] _votes, uint256[] _weights) public pure returns (uint256 pollId, uint256 yeaVotes, uint256 nayVotes) {
+    assert(_votes.length == _weights.length);
+    for (uint256 i = 0; i < _votes.length; i++) {
+      if (_votes[i] == 0) nayVotes += _weights[i];
+      else yeaVotes += _weights[i];
     }
     return (_pollId, yeaVotes, nayVotes);
   }

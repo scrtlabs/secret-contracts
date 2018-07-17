@@ -1,8 +1,8 @@
 {
   "contractName": "GetCode2",
   "abi": [],
-  "bytecode": "0x604c602c600b82828239805160001a60731460008114601c57601e565bfe5b5030600052607381538281f30073000000000000000000000000000000000000000030146080604052600080fd00a165627a7a72305820dc6698c0e8382d502bb04fb42467f8e3343e3f1031fbcb82bf13b82f935f000c0029",
-  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a72305820dc6698c0e8382d502bb04fb42467f8e3343e3f1031fbcb82bf13b82f935f000c0029",
+  "bytecode": "0x604c602c600b82828239805160001a60731460008114601c57601e565bfe5b5030600052607381538281f30073000000000000000000000000000000000000000030146080604052600080fd00a165627a7a723058202616bad5455b290c24601e2bbecc9d45ce1ee2c2ebde2b38247b731cafa953a20029",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a723058202616bad5455b290c24601e2bbecc9d45ce1ee2c2ebde2b38247b731cafa953a20029",
   "sourceMap": "26:698:6:-;;132:2:-1;166:7;155:9;146:7;137:37;252:7;246:14;243:1;238:23;232:4;229:33;270:1;265:20;;;;222:63;;265:20;274:9;222:63;;298:9;295:1;288:20;328:4;319:7;311:22;352:7;343;336:24",
   "deployedSourceMap": "26:698:6:-;;;;;;;;",
   "source": "pragma solidity ^0.4.22;\n\nlibrary GetCode2 {\n    function at(address _addr) internal returns (bytes o_code) {\n        assembly {\n        // retrieve the size of the code, this needs assembly\n            let size := extcodesize(_addr)\n        // allocate output byte array - this could also be done without assembly\n        // by using o_code = new bytes(size)\n            o_code := mload(0x40)\n        // new \"memory end\" including padding\n            mstore(0x40, add(o_code, and(add(add(size, 0x20), 0x1f), not(0x1f))))\n        // store length in memory\n            mstore(o_code, size)\n        // actually retrieve the code, this needs assembly\n            extcodecopy(_addr, add(o_code, 0x20), 0, size)\n        }\n    }\n}\n",
@@ -11,14 +11,14 @@
     "absolutePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/utils/GetCode2.sol",
     "exportedSymbols": {
       "GetCode2": [
-        1949
+        1913
       ]
     },
-    "id": 1950,
+    "id": 1914,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1939,
+        "id": 1903,
         "literals": [
           "solidity",
           "^",
@@ -34,16 +34,16 @@
         "contractKind": "library",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 1949,
+        "id": 1913,
         "linearizedBaseContracts": [
-          1949
+          1913
         ],
         "name": "GetCode2",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": {
-              "id": 1947,
+              "id": 1911,
               "nodeType": "Block",
               "src": "108:614:6",
               "statements": [
@@ -51,7 +51,7 @@
                   "externalReferences": [
                     {
                       "_addr": {
-                        "declaration": 1941,
+                        "declaration": 1905,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "227:5:6",
@@ -60,7 +60,7 @@
                     },
                     {
                       "o_code": {
-                        "declaration": 1944,
+                        "declaration": 1908,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "372:6:6",
@@ -69,7 +69,7 @@
                     },
                     {
                       "o_code": {
-                        "declaration": 1944,
+                        "declaration": 1908,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "683:6:6",
@@ -78,7 +78,7 @@
                     },
                     {
                       "o_code": {
-                        "declaration": 1944,
+                        "declaration": 1908,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "575:6:6",
@@ -87,7 +87,7 @@
                     },
                     {
                       "_addr": {
-                        "declaration": 1941,
+                        "declaration": 1905,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "672:5:6",
@@ -96,7 +96,7 @@
                     },
                     {
                       "o_code": {
-                        "declaration": 1944,
+                        "declaration": 1908,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "469:6:6",
@@ -104,7 +104,7 @@
                       }
                     }
                   ],
-                  "id": 1946,
+                  "id": 1910,
                   "nodeType": "InlineAssembly",
                   "operations": "{\n    let size := extcodesize(_addr)\n    o_code := mload(0x40)\n    mstore(0x40, add(o_code, and(add(add(size, 0x20), 0x1f), not(0x1f))))\n    mstore(o_code, size)\n    extcodecopy(_addr, add(o_code, 0x20), 0, size)\n}",
                   "src": "118:604:6"
@@ -112,7 +112,7 @@
               ]
             },
             "documentation": null,
-            "id": 1948,
+            "id": 1912,
             "implemented": true,
             "isConstructor": false,
             "isDeclaredConst": false,
@@ -120,15 +120,15 @@
             "name": "at",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1942,
+              "id": 1906,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1941,
+                  "id": 1905,
                   "name": "_addr",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1948,
+                  "scope": 1912,
                   "src": "61:13:6",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -137,7 +137,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1940,
+                    "id": 1904,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "61:7:6",
@@ -154,15 +154,15 @@
             },
             "payable": false,
             "returnParameters": {
-              "id": 1945,
+              "id": 1909,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1944,
+                  "id": 1908,
                   "name": "o_code",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1948,
+                  "scope": 1912,
                   "src": "94:12:6",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -171,7 +171,7 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 1943,
+                    "id": 1907,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
                     "src": "94:5:6",
@@ -186,14 +186,14 @@
               ],
               "src": "93:14:6"
             },
-            "scope": 1949,
+            "scope": 1913,
             "src": "49:673:6",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "internal"
           }
         ],
-        "scope": 1950,
+        "scope": 1914,
         "src": "26:698:6"
       }
     ],
@@ -203,14 +203,14 @@
     "absolutePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/utils/GetCode2.sol",
     "exportedSymbols": {
       "GetCode2": [
-        1949
+        1913
       ]
     },
-    "id": 1950,
+    "id": 1914,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1939,
+        "id": 1903,
         "literals": [
           "solidity",
           "^",
@@ -226,16 +226,16 @@
         "contractKind": "library",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 1949,
+        "id": 1913,
         "linearizedBaseContracts": [
-          1949
+          1913
         ],
         "name": "GetCode2",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": {
-              "id": 1947,
+              "id": 1911,
               "nodeType": "Block",
               "src": "108:614:6",
               "statements": [
@@ -243,7 +243,7 @@
                   "externalReferences": [
                     {
                       "_addr": {
-                        "declaration": 1941,
+                        "declaration": 1905,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "227:5:6",
@@ -252,7 +252,7 @@
                     },
                     {
                       "o_code": {
-                        "declaration": 1944,
+                        "declaration": 1908,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "372:6:6",
@@ -261,7 +261,7 @@
                     },
                     {
                       "o_code": {
-                        "declaration": 1944,
+                        "declaration": 1908,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "683:6:6",
@@ -270,7 +270,7 @@
                     },
                     {
                       "o_code": {
-                        "declaration": 1944,
+                        "declaration": 1908,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "575:6:6",
@@ -279,7 +279,7 @@
                     },
                     {
                       "_addr": {
-                        "declaration": 1941,
+                        "declaration": 1905,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "672:5:6",
@@ -288,7 +288,7 @@
                     },
                     {
                       "o_code": {
-                        "declaration": 1944,
+                        "declaration": 1908,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "469:6:6",
@@ -296,7 +296,7 @@
                       }
                     }
                   ],
-                  "id": 1946,
+                  "id": 1910,
                   "nodeType": "InlineAssembly",
                   "operations": "{\n    let size := extcodesize(_addr)\n    o_code := mload(0x40)\n    mstore(0x40, add(o_code, and(add(add(size, 0x20), 0x1f), not(0x1f))))\n    mstore(o_code, size)\n    extcodecopy(_addr, add(o_code, 0x20), 0, size)\n}",
                   "src": "118:604:6"
@@ -304,7 +304,7 @@
               ]
             },
             "documentation": null,
-            "id": 1948,
+            "id": 1912,
             "implemented": true,
             "isConstructor": false,
             "isDeclaredConst": false,
@@ -312,15 +312,15 @@
             "name": "at",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1942,
+              "id": 1906,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1941,
+                  "id": 1905,
                   "name": "_addr",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1948,
+                  "scope": 1912,
                   "src": "61:13:6",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -329,7 +329,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1940,
+                    "id": 1904,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "61:7:6",
@@ -346,15 +346,15 @@
             },
             "payable": false,
             "returnParameters": {
-              "id": 1945,
+              "id": 1909,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1944,
+                  "id": 1908,
                   "name": "o_code",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1948,
+                  "scope": 1912,
                   "src": "94:12:6",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -363,7 +363,7 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 1943,
+                    "id": 1907,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
                     "src": "94:5:6",
@@ -378,14 +378,14 @@
               ],
               "src": "93:14:6"
             },
-            "scope": 1949,
+            "scope": 1913,
             "src": "49:673:6",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "internal"
           }
         ],
-        "scope": 1950,
+        "scope": 1914,
         "src": "26:698:6"
       }
     ],
@@ -397,5 +397,5 @@
   },
   "networks": {},
   "schemaVersion": "2.0.1",
-  "updatedAt": "2018-07-16T18:05:55.399Z"
+  "updatedAt": "2018-07-17T21:35:14.681Z"
 }

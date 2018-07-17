@@ -13,7 +13,7 @@ class App extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     // Initialize web3
     if (typeof web3 !== 'undefined') {
       console.log("Using web3 detected from external source like Metamask.");
@@ -24,8 +24,7 @@ class App extends Component {
     }
     this.web3.eth.getBlock('latest').then(console.log)
   }
-  //
-  //
+
   //   // Import contracts
   //   const Voting = contract(require ('../build/contracts/Voting.json'));
   //   const TokenFactory = contract(require('../build/contracts/TokenFactory.json'));

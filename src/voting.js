@@ -25,22 +25,37 @@ Enigma.setNetwork(1);  // unsure about this line
 // set up web3 object
 const argv = require('minimist') (process.argv.slice(2));
 const url = argv.url || 'http://localhost:8545';
-const web3 = new Web3(new Web3.providers.HttpProvider(url));
+const provider = new Web3.providers.HttpProvider (url);
+const web3 = new Web3 (provider);
 
 const CALLABLE = 'countVotes(uint256, uint256[], uint256[])';
 const CALLBACK = 'updatePollStatus(uint256, uint256, uint256)';
 const ENG_FEE = 1;
+const GAS = 4712388;
+
+// Workaround for this issue: https://github.com/trufflesuite/truffle-contract/issues/57
+[Enigma, EnigmaToken, Voting, TokenFactory, VotingToken].forEach (instance => {
+    instance.setProvider (provider);
+    if (typeof instance.currentProvider.sendAsync !== "function") {
+        instance.currentProvider.sendAsync = function () {
+            return instance.currentProvider.send.apply (
+                instance.currentProvider, arguments
+            );
+        };
+    }
+});
+
+
 /* TODO
 Other constants here...
 */
 
-let encryptedVotes;
-let weights;
+let encryptedVotes = [];
+let weights = [];
 
 // Declare variables
 let enigma;
 let principal;
-let Register;
 let enigmaContract;
 let enigmaTokenContract;
 let votingContract;
@@ -49,65 +64,100 @@ let votingTokenContract;
 let votingAccounts;
 let accounts;
 
-function handleRegister(err, event) {
-  console.log('Confirm that Register event was received: ', JSON.stringify (event.args));
-  // Make sure that the given worker is not the principal node
-  if (web3Utils.toChecksumAddress(event.args.custodian) == principalCustodian) {
-    return false;
-  }
+function testVoting() {
+  console.log('Test the voting contract.');
 
-  /* Simulate principal node operations. */
-  principal.setWorkersParams().then(result => async() => {
-    const event = result.logs[0];
-    if (!event.args._success) {
-      throw 'Unable to set workers parameters.';
-    }
-    /* End simulation */
+  let task;
 
-    // Buy voting tokens from the first voting account
-    await tokenFactoryContract.contribute({ from: votingAccounts[0], value: web3.toWei(1, "ether")});
-
-    // Approve token transfer for Voting contract
-    await votingTokenContract.approve(votingContract.address, web3.toWei(10, "ether"), {from:votingAccounts[0]});
-
-    // Create poll from default account
-    await votingContract.createPoll(50, "Test Poll", {from: web3.eth.defaultAccount});
-
-    // Have the first voting account vote in the new poll
-    await votingContract.castVote(1, 1, web3.toWei(10, "ether"), {from:votingAccounts[0]});
-    encryptedVotes.push(1);
-    weights.push(10);
-
-    // End poll from the default account
-    await votingContract.endPoll(1, {from: web3.eth.defaultAccount});
-
-    // Count votes and update poll status
-    const task = await enigma.createTask(web3.eth.getBlockNumber(),
-      votingContract.address,
-      CALLABLE,
-      [1, encryptedVotes, weights],
-      CALLBACK,
-      ENG_FEE
-    );
-
-    await task.approveFee({from:web3.eth.defaultAccount});
-    return task.compute({from: web3.eth.defaultAccount});
+  // Buy voting tokens from the first voting account
+  console.log("Buy voting tokens.");
+  return tokenFactoryContract.contribute({
+    from: votingAccounts[0],
+    value: web3.utils.toWei("1", "ether"),
+    gas: GAS
   })
-  .then(result => {
-    console.log ('got tx:', result.tx, 'for task:', task.taskId, '');
-    console.log ('mined on block:', result.receipt.blockNumber);
-    setTimeout (() => {
-      console.log ('waiting for the next worker to register...');
-    }, 300);
-  })
-  .catch(err => {
-    console.error(err);
-    Register.stopWatching();
-  })
+    .then(result => {
+      // Approve token transfer for Voting contract
+      console.log("Approve token transfer.");
+      return votingTokenContract.approve(votingContract.address, web3.utils.toWei("10", "ether"), {
+        from:votingAccounts[0],
+        gas: GAS
+      });
+    })
+    .then(result => {
+      // Create poll from default account
+      console.log("Create poll.");
+      return votingContract.createPoll(50, "Test Poll", {
+        from: web3.eth.defaultAccount,
+        gas: GAS
+      });
+    })
+    .then(result => {
+      // Have the first voting account vote in the new poll
+      encryptedVotes.push(1);
+      weights.push(10);
+      console.log("Vote in poll.");
+      return votingContract.castVote(1, 1, web3.utils.toWei("10", "ether"), {
+        from:votingAccounts[0],
+        gas: GAS
+      });
+    })
+    .then(result => {
+      // End poll from the default account
+      console.log("End poll.");
+      return votingContract.endPoll(1, {
+        from: web3.eth.defaultAccount,
+        gas: GAS
+      });
+    })
+    .then(result => {
+      return web3.eth.getBlockNumber();
+    })
+    .then(blockNumber => {
+      console.log("Create task.");
+      return enigma.createTask(
+        blockNumber,
+        votingContract.address,
+        CALLABLE,
+        [1, encryptedVotes, weights],
+        CALLBACK,
+        ENG_FEE,
+        []
+      );
+    })
+    .then(_task => {
+      console.log("Approve task fee.");
+      task = _task;
+      return task.approveFee({
+        from:web3.eth.defaultAccount,
+        gas: GAS
+      });
+    })
+    .then(result => {
+      console.log("Compute task.");
+      return task.compute({
+        from: web3.eth.defaultAccount,
+        gas: GAS
+      });
+    })
+    .then(result => {
+      console.log ('got tx:', result.tx, 'for task:', task.taskId, '');
+      console.log ('mined on block:', result.receipt.blockNumber);
+      for (var i = 0; i < result.logs.length; i++) {
+        var log = result.logs[i];
+        console.log(log);
+      }
+      setTimeout (() => {
+        console.log ('waiting for the next worker to register...');
+      }, 300);
+    })
+    .catch(err => {
+      console.error(err);
+    })
 }
 
 web3.eth.getAccounts()
-  .then (_accounts => async() => {
+  .then(_accounts => {
     accounts = _accounts;
     // Set the web3 default account to the first Ganache account
     web3.eth.defaultAccount = accounts[0];
@@ -119,30 +169,60 @@ web3.eth.getAccounts()
     }
 
     // create Enigma contract objects
-    enigmaContract = await Enigma.deployed();
-    enigmaTokenContract = await EnigmaToken.deployed();
+    return Enigma.deployed();
+  })
+  .then(result => {
+    enigmaContract = result;
+    return EnigmaToken.deployed();
+  })
+  .then(result => {
+    enigmaTokenContract = result;
     enigma = new eng.Enigma(enigmaContract, enigmaTokenContract);
 
     // set up principal node
     principal = new testUtils.Principal(enigmaContract, accounts[9]);
 
-    // create Voting contract objects
-    votingContract = await Voting.deployed();
-    tokenFactoryContract = await TokenFactory.deployed();
-    votingTokenContract = await VotingToken.deployed();
-
-    // Need to know more about this
-    Register = enigmaContract.Register({ fromBlock: 0 });
-    Register.watch(handleRegister);
-    console.log('Waiting for Register events...');
-
-    /* Simulate the registering of the principal node. */
+    return Voting.deployed();
+  })
+  .then(result => {
+    votingContract = result;
+    return TokenFactory.deployed();
+  })
+  .then(result => {
+    tokenFactoryContract = result;
+    return VotingToken.deployed();
+  })
+  .then(result => {
+    votingTokenContract = result;
     return principal.register();
   })
-  .catch (err => {
+  .then (result => {
+    const event = result.logs[0];
+    if (!event.args._success) {
+      throw 'Unable to register worker';
+    }
+    return principal.setWorkersParams();
+  })
+  .then (result => {
+    const event = result.logs[0];
+    if (!event.args._success) {
+      throw 'Unable to set worker params';
+    }
+
+    console.log ('network using random seed:', event.args.seed.toNumber ());
+
+    testVoting();
+  })
+  .catch(err => {
     console.log(err);
-  });
-  /* End of simulation */
+  })
+
+var altVoting = new web3.eth.Contract(require('../build/contracts/Voting.json').abi, '0x7b77acb30998e41685337b5413c2d71840b0ff38');
+altVoting.events.pollPassed(function(error, result) {
+  console.log("really??? nothing?????");
+  console.log(result);
+})
+
 
 // NOT USED YET
 function getEncryptedVote(vote) {
