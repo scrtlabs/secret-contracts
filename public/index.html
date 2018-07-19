@@ -3,8 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <title> Secret Voting </title>
+  <link rel="stylesheet" type="text/css" href="./index.css">
 </head>
 <body>
+  <h1> Secret Voting Demo </h1>
+  <div className="description">
+    <p>
+      <h3> Instructions: </h3>
+      This dApp utilizes the Enigma Protocol Testnet to implement secret voting. The steps are as follows: <br />
+      1. Run Ganache. You have the option of changing to a different account except for account number 9. <br />
+      2. Buy Voting Tokens. The current exchange rate is 1 Ether for 10 Voting Tokens. <br />
+      3. Create a poll. Each poll is associated with a poll ID. There will be a label to the right showing the poll ID of the current poll. <br />
+      4. Vote in the poll. In the current implementation, voting tokens are locked up by the contract until the end of the poll. The dApp will automatically approve the Voting Token transfers for you as well.<br />
+      5. End the poll. Note that only the creator of a poll can end that poll. We implemented it this way the simplify the testing process. <br />
+        a) Once the poll has ended, a selected SGX node on the Enigma Network will privately tally the votes and update the result of the poll. <br />
+      6. Check the poll result. All poll metrics are public including the final status of the poll and the number of "yes"and "no" votes casted.
+      However, due to secret voting, there is no way to match voters with their vote choice. <br />
+  </p>
+  </div>
   <div id="root"> </div>
   <script src="bundle.js"></script>
 </body>

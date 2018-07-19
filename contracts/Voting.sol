@@ -1,6 +1,7 @@
 // Voting.sol, Andrew Tam
 // NOTE: Anyone can vote and create a poll, prone to Sybil attacks.
-// Also, note that the creator of a poll can vote in the poll itself.
+// Also, note that the creator of a poll can vote in the poll itself. Maybe
+// add functionality for having a cost to creating a poll.
 pragma solidity ^0.4.24;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
@@ -25,7 +26,6 @@ contract Voting {
     uint256 quorumPercentage;
     uint256 yeaVotes;
     uint256 nayVotes;
-    uint256 numVoters;  // Currently not used
     string description;
     mapping(address => Voter) voters;
   }
@@ -86,8 +86,8 @@ contract Voting {
   function updatePollStatus(uint256 _pollId, uint256 _yeaVotes, uint256 _nayVotes) public validPoll(_pollId)
     // onlyEnigma() /* Add back for final launch */
     returns (bool)
-      {
-    /* require(getPollStatus(_pollId) == PollStatus.TALLY, "Poll has not expired yet.");
+    {
+    require(getPollStatus(_pollId) == PollStatus.TALLY, "Poll has not expired yet.");
     Poll storage curPoll = polls[_pollId];
     curPoll.yeaVotes = _yeaVotes;
     curPoll.nayVotes = _nayVotes;
@@ -101,9 +101,7 @@ contract Voting {
     }
 
     emit pollPassed(pollStatus);
-    return pollStatus */
-    emit pollPassed(true);
-    return true;
+    return pollStatus;
   }
 
   /*
@@ -125,7 +123,7 @@ contract Voting {
    * The callable function that is computed by the SGX node.
    */
   function countVotes(uint256 _pollId, uint256[] _votes, uint256[] _weights) public pure returns (uint256 pollId, uint256 yeaVotes, uint256 nayVotes) {
-    assert(_votes.length == _weights.length);
+    require(_votes.length == _weights.length);
     for (uint256 i = 0; i < _votes.length; i++) {
       if (_votes[i] == 0) nayVotes += _weights[i];
       else yeaVotes += _weights[i];
@@ -150,7 +148,6 @@ contract Voting {
         weight: _weight
     });
 
-    curPoll.numVoters++;
     emit voteCasted(msg.sender, _pollId, _encryptedVote, _weight);
   }
 

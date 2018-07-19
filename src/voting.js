@@ -20,7 +20,7 @@ const Voting = contract(require('../build/contracts/Voting.json'));
 const TokenFactory = contract(require('../build/contracts/TokenFactory.json'));
 const VotingToken = contract(require('../build/contracts/VotingToken.json'));
 
-Enigma.setNetwork(1);  // unsure about this line
+Enigma.setNetwork(1); 
 
 // set up web3 object
 const argv = require('minimist') (process.argv.slice(2));
@@ -28,8 +28,9 @@ const url = argv.url || 'http://localhost:8545';
 const provider = new Web3.providers.HttpProvider (url);
 const web3 = new Web3 (provider);
 
-const CALLABLE = 'countVotes(uint256, uint256[], uint256[])';
-const CALLBACK = 'updatePollStatus(uint256, uint256, uint256)';
+// callable and callback can't have any whitespace
+const CALLABLE = 'countVotes(uint256,uint256[],uint256[])';
+const CALLBACK = 'updatePollStatus(uint256,uint256,uint256)';
 const ENG_FEE = 1;
 const GAS = 4712388;
 
@@ -216,12 +217,6 @@ web3.eth.getAccounts()
   .catch(err => {
     console.log(err);
   })
-
-var altVoting = new web3.eth.Contract(require('../build/contracts/Voting.json').abi, '0x7b77acb30998e41685337b5413c2d71840b0ff38');
-altVoting.events.pollPassed(function(error, result) {
-  console.log("really??? nothing?????");
-  console.log(result);
-})
 
 
 // NOT USED YET
