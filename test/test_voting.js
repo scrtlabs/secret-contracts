@@ -10,18 +10,6 @@ var Enigma = artifacts.require("./Enigma.sol");
 var EnigmaToken = artifacts.require("./EnigmaToken.sol");
 const sleep = require('util').promisify(setTimeout)
 
-// contract('Voting', async(accounts) => {
-//   it("Should create a poll and the new poll ID should be 1.", function() {
-//     return Voting.deployed().then(async function(instance) {
-//       await instance.createPoll(50, "Test Poll", {from: web3.eth.accounts[1]});
-//       const status = await instance.getPollStatus(1);
-//       const pollId = await instance.pollCount.call();
-//       assert.equal(status, 0);
-//       assert.equal(pollId, 1);
-//     });
-//   });
-// })
-
 contract('TokenFactory', async(accounts) => {
   it("Should give account 1 10 tokens in return for 1 Ether and then vote in a poll.", function() {
     return TokenFactory.deployed().then(async function(instance) {

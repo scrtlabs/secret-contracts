@@ -105,7 +105,7 @@
         "id": 1307,
         "nodeType": "ImportDirective",
         "scope": 1389,
-        "sourceUnit": 1971,
+        "sourceUnit": 2071,
         "src": "125:27:3",
         "symbolAliases": [],
         "unitAlias": ""
@@ -185,7 +185,7 @@
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_contract$_VotingToken_$1970",
+              "typeIdentifier": "t_contract$_VotingToken_$2070",
               "typeString": "contract VotingToken"
             },
             "typeName": {
@@ -193,10 +193,10 @@
               "id": 1312,
               "name": "VotingToken",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1970,
+              "referencedDeclaration": 2070,
               "src": "326:11:3",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_VotingToken_$1970",
+                "typeIdentifier": "t_contract$_VotingToken_$2070",
                 "typeString": "contract VotingToken"
               }
             },
@@ -309,7 +309,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 2779,
+                        "referencedDeclaration": 2879,
                         "src": "582:3:3",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -357,7 +357,7 @@
                       "referencedDeclaration": 1313,
                       "src": "598:5:3",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_VotingToken_$1970",
+                        "typeIdentifier": "t_contract$_VotingToken_$2070",
                         "typeString": "contract VotingToken"
                       }
                     },
@@ -391,10 +391,10 @@
                         "name": "VotingToken",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1970,
+                        "referencedDeclaration": 2070,
                         "src": "606:11:3",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_VotingToken_$1970_$",
+                          "typeIdentifier": "t_type$_t_contract$_VotingToken_$2070_$",
                           "typeString": "type(contract VotingToken)"
                         }
                       },
@@ -408,13 +408,13 @@
                       "nodeType": "FunctionCall",
                       "src": "606:19:3",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_VotingToken_$1970",
+                        "typeIdentifier": "t_contract$_VotingToken_$2070",
                         "typeString": "contract VotingToken"
                       }
                     },
                     "src": "598:27:3",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_VotingToken_$1970",
+                      "typeIdentifier": "t_contract$_VotingToken_$2070",
                       "typeString": "contract VotingToken"
                     }
                   },
@@ -507,7 +507,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 2779,
+                            "referencedDeclaration": 2879,
                             "src": "742:3:3",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -588,10 +588,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        2782,
-                        2783
+                        2882,
+                        2883
                       ],
-                      "referencedDeclaration": 2783,
+                      "referencedDeclaration": 2883,
                       "src": "734:7:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -628,7 +628,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 2779,
+                          "referencedDeclaration": 2879,
                           "src": "800:3:3",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -754,7 +754,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 2779,
+                        "referencedDeclaration": 2879,
                         "src": "869:3:3",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -816,7 +816,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 2779,
+                          "referencedDeclaration": 2879,
                           "src": "938:3:3",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -871,7 +871,7 @@
                         "referencedDeclaration": 1313,
                         "src": "927:5:3",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_VotingToken_$1970",
+                          "typeIdentifier": "t_contract$_VotingToken_$2070",
                           "typeString": "contract VotingToken"
                         }
                       },
@@ -882,7 +882,7 @@
                       "lValueRequested": false,
                       "memberName": "mint",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 2497,
+                      "referencedDeclaration": 2597,
                       "src": "927:10:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_uint256_$returns$_t_bool_$",
@@ -965,7 +965,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 2779,
+                          "referencedDeclaration": 2879,
                           "src": "1024:3:3",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -1085,10 +1085,10 @@
                       "name": "revert",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        2784,
-                        2785
+                        2884,
+                        2885
                       ],
-                      "referencedDeclaration": 2784,
+                      "referencedDeclaration": 2884,
                       "src": "1086:6:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_revert_pure$__$returns$__$",
@@ -1176,7 +1176,7 @@
         "id": 1307,
         "nodeType": "ImportDirective",
         "scope": 1389,
-        "sourceUnit": 1971,
+        "sourceUnit": 2071,
         "src": "125:27:3",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1256,7 +1256,7 @@
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_contract$_VotingToken_$1970",
+              "typeIdentifier": "t_contract$_VotingToken_$2070",
               "typeString": "contract VotingToken"
             },
             "typeName": {
@@ -1264,10 +1264,10 @@
               "id": 1312,
               "name": "VotingToken",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1970,
+              "referencedDeclaration": 2070,
               "src": "326:11:3",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_VotingToken_$1970",
+                "typeIdentifier": "t_contract$_VotingToken_$2070",
                 "typeString": "contract VotingToken"
               }
             },
@@ -1380,7 +1380,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 2779,
+                        "referencedDeclaration": 2879,
                         "src": "582:3:3",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -1428,7 +1428,7 @@
                       "referencedDeclaration": 1313,
                       "src": "598:5:3",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_VotingToken_$1970",
+                        "typeIdentifier": "t_contract$_VotingToken_$2070",
                         "typeString": "contract VotingToken"
                       }
                     },
@@ -1462,10 +1462,10 @@
                         "name": "VotingToken",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1970,
+                        "referencedDeclaration": 2070,
                         "src": "606:11:3",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_VotingToken_$1970_$",
+                          "typeIdentifier": "t_type$_t_contract$_VotingToken_$2070_$",
                           "typeString": "type(contract VotingToken)"
                         }
                       },
@@ -1479,13 +1479,13 @@
                       "nodeType": "FunctionCall",
                       "src": "606:19:3",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_VotingToken_$1970",
+                        "typeIdentifier": "t_contract$_VotingToken_$2070",
                         "typeString": "contract VotingToken"
                       }
                     },
                     "src": "598:27:3",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_VotingToken_$1970",
+                      "typeIdentifier": "t_contract$_VotingToken_$2070",
                       "typeString": "contract VotingToken"
                     }
                   },
@@ -1578,7 +1578,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 2779,
+                            "referencedDeclaration": 2879,
                             "src": "742:3:3",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -1659,10 +1659,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        2782,
-                        2783
+                        2882,
+                        2883
                       ],
-                      "referencedDeclaration": 2783,
+                      "referencedDeclaration": 2883,
                       "src": "734:7:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -1699,7 +1699,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 2779,
+                          "referencedDeclaration": 2879,
                           "src": "800:3:3",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -1825,7 +1825,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 2779,
+                        "referencedDeclaration": 2879,
                         "src": "869:3:3",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -1887,7 +1887,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 2779,
+                          "referencedDeclaration": 2879,
                           "src": "938:3:3",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -1942,7 +1942,7 @@
                         "referencedDeclaration": 1313,
                         "src": "927:5:3",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_VotingToken_$1970",
+                          "typeIdentifier": "t_contract$_VotingToken_$2070",
                           "typeString": "contract VotingToken"
                         }
                       },
@@ -1953,7 +1953,7 @@
                       "lValueRequested": false,
                       "memberName": "mint",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 2497,
+                      "referencedDeclaration": 2597,
                       "src": "927:10:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_uint256_$returns$_t_bool_$",
@@ -2036,7 +2036,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 2779,
+                          "referencedDeclaration": 2879,
                           "src": "1024:3:3",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -2156,10 +2156,10 @@
                       "name": "revert",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        2784,
-                        2785
+                        2884,
+                        2885
                       ],
-                      "referencedDeclaration": 2784,
+                      "referencedDeclaration": 2884,
                       "src": "1086:6:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_revert_pure$__$returns$__$",
@@ -2225,19 +2225,13 @@
     "version": "0.4.24+commit.e67f0147.Emscripten.clang"
   },
   "networks": {
-    "5777": {
+    "1532137510640": {
       "events": {},
       "links": {},
-      "address": "0x8273e4b8ed6c78e252a9fca5563adfcc75c91b2a",
-      "transactionHash": "0x3d283254919819678becbb0ee4db8ca2a543345a3ae03cd1c6fb12ea618edaa5"
-    },
-    "1531931861911": {
-      "events": {},
-      "links": {},
-      "address": "0xb2040523ef5ff8c7afb3c3b3a859c3238e673cc7",
-      "transactionHash": "0x3cc7f6814d6500e15c28e6ee415478d82e18b1f7c1008d81fb03056802bf3ad1"
+      "address": "0x4bcfc5bc4d50823f63665804dca5f9b999d0d61c",
+      "transactionHash": "0xab3ee189d5ede4c6ba9cde0e78092156a44501c6e9bb2e09a753b5ae1090c24d"
     }
   },
   "schemaVersion": "2.0.1",
-  "updatedAt": "2018-07-19T21:51:06.067Z"
+  "updatedAt": "2018-07-21T02:36:50.790Z"
 }

@@ -27,7 +27,8 @@ contract Voting {
     uint256 yeaVotes;
     uint256 nayVotes;
     string description;
-    mapping(address => Voter) voters;
+    address[] voters;
+    mapping(address => Voter) voterInfo;
   }
 
   /* VOTER */
@@ -85,7 +86,6 @@ contract Voting {
    */
   function updatePollStatus(uint256 _pollId, uint256 _yeaVotes, uint256 _nayVotes) public validPoll(_pollId)
     // onlyEnigma() /* Add back for final launch */
-    returns (bool)
     {
     require(getPollStatus(_pollId) == PollStatus.TALLY, "Poll has not expired yet.");
     Poll storage curPoll = polls[_pollId];
@@ -101,7 +101,6 @@ contract Voting {
     }
 
     emit pollPassed(pollStatus);
-    return pollStatus;
   }
 
   /*
@@ -142,11 +141,13 @@ contract Voting {
 
     Poll storage curPoll = polls[_pollId];
 
-    curPoll.voters[msg.sender] = Voter({
+    curPoll.voterInfo[msg.sender] = Voter({
         hasVoted: true,
         vote: _encryptedVote,
         weight: _weight
     });
+
+    curPoll.voters.push(msg.sender);
 
     emit voteCasted(msg.sender, _pollId, _encryptedVote, _weight);
   }
@@ -155,7 +156,7 @@ contract Voting {
    * Checks if a user has voted for a specific poll.
    */
   function userHasVoted(uint256 _pollId, address _user) public view validPoll(_pollId) returns (bool hasVoted) {
-    return (polls[_pollId].voters[_user].hasVoted);
+    return (polls[_pollId].voterInfo[_user].hasVoted);
   }
 
   /*
@@ -177,9 +178,23 @@ contract Voting {
   function withdrawTokens(uint256 _numTokens, uint256 _pollId) external validPoll(_pollId) {
     require(getPollStatus(_pollId) == PollStatus.REJECTED ||  getPollStatus(_pollId) == PollStatus.PASSED, "Poll has not expired.");
     require(userHasVoted(_pollId, msg.sender), "User did not vote in the poll.");
-    require(_numTokens <= polls[_pollId].voters[msg.sender].weight, "User is trying to withdraw too many tokens.");
+    require(_numTokens <= polls[_pollId].voterInfo[msg.sender].weight, "User is trying to withdraw too many tokens.");
     require(token.transfer(msg.sender, _numTokens));
   }
 
+  function getInfoForPoll(uint256 _pollId) public validPoll(_pollId) returns (uint256[], uint256[]) {
+    require(getPollStatus(_pollId) != PollStatus.IN_PROGRESS);
+
+    Poll storage curPoll = polls[_pollId];
+    uint256 numVoters = curPoll.voters.length;
+    uint256[] memory votes = new uint256[](numVoters);
+    uint256[] memory weights = new uint256[](numVoters);
+    for (uint256 i = 0; i < numVoters; i++) {
+      address curVoter = curPoll.voters[i];
+      votes[i] = curPoll.voterInfo[curVoter].vote;
+      weights[i] = curPoll.voterInfo[curVoter].weight;
+    }
+    return (votes, weights);
+  }
 
 }
