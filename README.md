@@ -1,24 +1,20 @@
 # Secret Contracts
 
-This repository contains secret contracts that use the Enigma Protocol such as voting, TCRs, and auctions. The contracts are written in Solidity and the front-end will utilize the enigma-js library.
+This repository showcases secret contracts that utilize the Enigma Protocol such as secret voting, secret auctions, and secret TCRs. The contracts are written in Solidity and the dApp front-end uses React and the Enigma JS library.
 
-# Design Strategies:
+# Design Features:
 
-Voting:
-Locked token-weighting, multiple polls per contract, timed polls, specified quorum percentages.
+Voting: Locked token-weighting, support for multiple polls, custom quorum percentages.
 
-TCRs:
-TBD
+# Instructions:
 
-Auctions:
-TBD
-
-To test the code(NOTE: no tests currently written):
-1. Clone the repository.
-2. Start a local Ganache node.
-3. Run 'truffle migrate --network development' and 'truffle test' in the root of the directory.
+Note: These instructions are specific to my setup and only work for someone running a remote SGX node.
+1. Start Ganache and Core on the SGX server.
+2. Run Surface locally, although in the future Core and Surface will be merged together. Make sure that you are using the correct ports.
+3. Run "./deploy-ganache ganache_remote" in the root of this directory. This deploys the contracts to the SGX node. I have already configured truffle.js and the dApp front-end to use the remote Ganache instance.
+4. Run "npm start", which starts a webpack server on localhost:8080.
+5. Go to that URL and start testing the dApp!
 
 # Important Notes:
-In order to integrate my contract with the Enigma Protocol, I have included the Enigma and Enigma
-token contracts in my repository in addition to the Enigma Javascript Library, which is located in
-the enigma-lib folder. I also have slightly edited the Enigma contracts for interoperability. 
+
+I have taken parts from the 'enigma-contract' repository and included them in this repository such as the Enigma/Enigma Token contracts, the Enigma JS library files, and example test data.

@@ -5,9 +5,6 @@
 //  -Not sure if the convention is right of having so many state variables
 //  -Need to add encryption
 //  -Be consistent with let/var
-// TODO:
-//  -Getting poll status
-//  -Token withdrawal
 
 // Import libraries
 const Web3 = require('web3');

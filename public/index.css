@@ -7,3 +7,7 @@ body {
 h1 {
   text-align: center;
 }
+
+li {
+  padding: 2px;
+}
