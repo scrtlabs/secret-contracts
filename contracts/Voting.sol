@@ -85,7 +85,7 @@ contract Voting {
    * URGENT NOTE: The onlyEnigma modifier is currently commented out.
    */
   function updatePollStatus(uint256 _pollId, uint256 _yeaVotes, uint256 _nayVotes) public validPoll(_pollId)
-    // onlyEnigma() /* Add back for final launch */
+    onlyEnigma() /* Add back for final launch */
     {
     require(getPollStatus(_pollId) == PollStatus.TALLY, "Poll has not expired yet.");
     Poll storage curPoll = polls[_pollId];
@@ -182,9 +182,11 @@ contract Voting {
     require(token.transfer(msg.sender, _numTokens));
   }
 
+  /*
+   * Gets the encrypted votes and weights for a given poll after it has ended.
+   */
   function getInfoForPoll(uint256 _pollId) public validPoll(_pollId) returns (uint256[], uint256[]) {
     require(getPollStatus(_pollId) != PollStatus.IN_PROGRESS);
-
     Poll storage curPoll = polls[_pollId];
     uint256 numVoters = curPoll.voters.length;
     uint256[] memory votes = new uint256[](numVoters);

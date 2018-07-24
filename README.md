@@ -11,7 +11,7 @@ Voting: Locked token-weighting, support for multiple polls, custom quorum percen
 Note: These instructions are specific to my setup and only work for someone running a remote SGX node.
 1. Start Ganache and Core on the SGX server.
 2. Run Surface locally, although in the future Core and Surface will be merged together. Make sure that you are using the correct ports.
-3. Run "./deploy-ganache ganache_remote" in the root of this directory. This deploys the contracts to the SGX node. I have already configured truffle.js and the dApp front-end to use the remote Ganache instance.
+3. Run "./deploy-ganache ganache_remote" in the root of this directory. This command deploys the contracts to the SGX node. I have already configured truffle.js and the dApp front-end to use the remote Ganache instance.
 4. Run "npm start", which starts a webpack server on localhost:8080.
 5. Go to that URL and start testing the dApp!
 
