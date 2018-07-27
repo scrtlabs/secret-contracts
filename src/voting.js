@@ -1,6 +1,5 @@
 // voting.js, Andrew Tam
 // This script simulates an Ethereum dApp that uses a secret voting contract.
-// Check awaits
 // Highly modeled after: https://github.com/enigmampc/enigma-contract/blob/develop/integration/coin-mixer.js
 
 // Import Enigma libraries
@@ -20,7 +19,7 @@ const Voting = contract(require('../build/contracts/Voting.json'));
 const TokenFactory = contract(require('../build/contracts/TokenFactory.json'));
 const VotingToken = contract(require('../build/contracts/VotingToken.json'));
 
-Enigma.setNetwork(1); 
+Enigma.setNetwork(1);
 
 // set up web3 object
 const argv = require('minimist') (process.argv.slice(2));
@@ -45,11 +44,6 @@ const GAS = 4712388;
         };
     }
 });
-
-
-/* TODO
-Other constants here...
-*/
 
 let encryptedVotes = [];
 let weights = [];
@@ -115,6 +109,7 @@ function testVoting() {
       return web3.eth.getBlockNumber();
     })
     .then(blockNumber => {
+      // Create an Enigma task
       console.log("Create task.");
       return enigma.createTask(
         blockNumber,
@@ -127,6 +122,7 @@ function testVoting() {
       );
     })
     .then(_task => {
+      // Approve a fee for the task
       console.log("Approve task fee.");
       task = _task;
       return task.approveFee({
@@ -135,6 +131,7 @@ function testVoting() {
       });
     })
     .then(result => {
+      // Compute the task
       console.log("Compute task.");
       return task.compute({
         from: web3.eth.defaultAccount,
@@ -142,6 +139,7 @@ function testVoting() {
       });
     })
     .then(result => {
+      // Check the transaction
       console.log ('got tx:', result.tx, 'for task:', task.taskId, '');
       console.log ('mined on block:', result.receipt.blockNumber);
       for (var i = 0; i < result.logs.length; i++) {
@@ -211,7 +209,6 @@ web3.eth.getAccounts()
     }
 
     console.log ('network using random seed:', event.args.seed.toNumber ());
-
     testVoting();
   })
   .catch(err => {

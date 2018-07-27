@@ -1,4 +1,7 @@
+// Poll.js, Andrew Tam
+
 import React, { Component } from 'react';
+import './App.css';
 
 const CALLABLE = 'countVotes(uint256,uint256[],uint256[])';
 const CALLBACK = 'updatePollStatus(uint256,uint256,uint256)';
@@ -7,6 +10,7 @@ const GAS = 4712388;
 
 class Poll extends Component {
 
+  /* CONSTRUCTOR */
   constructor(props) {
     super(props);
     this.newPoll = this.newPoll.bind(this);
@@ -19,13 +23,18 @@ class Poll extends Component {
     this.statusPollID;
   }
 
+  /*
+   * Creates a new poll.
+   */
   newPoll(event) {
     if (event) event.preventDefault();
+    // create a new poll
     this.props.objects.Voting.createPoll(parseInt(this.curQuorumPct.value), String(this.curPollDescription.value), {
       from: this.props.objects.accounts[this.props.curAccount],
       gas: GAS
     })
     .then(result => {
+      // update the App state
       this.props.update();
       alert("Poll was created!");
       document.getElementById("new_form").reset();
@@ -35,15 +44,18 @@ class Poll extends Component {
     })
   }
 
-  /* LEAVE THIS FOR LATER */
-  // 1. Create task and set ENG_FEE
+  /*
+   * Allow a user to end a poll.
+   */
   endPoll(event) {
     if (event) event.preventDefault();
+    // end the poll
     this.props.objects.Voting.endPoll(parseInt(this.endPollID.value), {
       from: this.props.objects.accounts[this.props.curAccount],
       gas: GAS
     })
     .then(result => {
+      // call the helper function to create an Enigma task
       this.enigmaTask(parseInt(this.endPollID.value));
       alert("The poll was successfully ended and an Enigma task will be created.");
       document.getElementById("end_form").reset();
@@ -55,6 +67,9 @@ class Poll extends Component {
 
   }
 
+  /*
+   * Creates an Enigma task to be computed by the network.
+   */
   enigmaTask = async(pollID) => {
     let voters;
     let voterInfo;
@@ -62,6 +77,7 @@ class Poll extends Component {
     let weights;
     let task;
 
+    // retrieve all the votes and weights for a given poll
     this.props.objects.Voting.getInfoForPoll.call(parseInt(pollID), {
       from: this.props.objects.accounts[this.props.curAccount],
       gas: GAS
@@ -76,6 +92,7 @@ class Poll extends Component {
     })
     .then(blockNumber => {
       console.log("Create task.");
+      // create an Enigma task
       return this.props.objects.enigma.createTask(
         blockNumber,
         this.props.objects.Voting.address,
@@ -89,6 +106,7 @@ class Poll extends Component {
     .then(_task => {
       console.log("Approve task fee.");
       task = _task;
+      // approve a task fee
       return task.approveFee({
         from: this.props.objects.accounts[this.props.curAccount],
         gas: GAS
@@ -96,12 +114,14 @@ class Poll extends Component {
     })
     .then(result => {
       console.log("Compute task.");
+      // compute the task
       return task.compute({
         from: this.props.objects.accounts[this.props.curAccount],
         gas: GAS
       });
     })
     .then(result => {
+      // check that the task was computed
       console.log ('got tx:', result.tx, 'for task:', task.taskId, '');
       console.log ('mined on block:', result.receipt.blockNumber);
       for (let i = 0; i < result.logs.length; i++) {
@@ -114,11 +134,16 @@ class Poll extends Component {
     })
   }
 
+  /*
+   * Gets the status of a given poll.
+   */
   getPollStatus(event) {
     if (event) event.preventDefault();
+    // get the result
     this.props.objects.Voting.getPollStatus(parseInt(this.statusPollID.value), {
       from: this.props.objects.accounts[this.props.curAccount]
     })
+    // parse the output
     .then(result => {
       let status = result.toNumber();
       if (status == 0) {

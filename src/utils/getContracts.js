@@ -1,3 +1,6 @@
+// getContracts.js, Andrew Tam
+// This file retrieves contracts and other Enigma-related objects for the dApp.
+
 // Import libraries
 const Web3 = require('web3');
 const contract = require('truffle-contract');
@@ -8,6 +11,7 @@ const eng = require('../../enigma-lib/Enigma');  // used to create worker tasks
 
 class EnigmaSetup {
 
+  /* CONSTRUCTOR */
   constructor() {
     this.Voting = null;
     this.VotingToken = null;
@@ -20,10 +24,13 @@ class EnigmaSetup {
     this.accounts = null;
   }
 
+  /*
+   * Initializes web3 and imports the deployed contracts.
+   */
   async init() {
     console.log("hello");
     try {
-      // Use ganache for the web3 instance.
+      // Use ganache on the SGX server for the web3 instance.
       console.log("Get web3");
       const argv = require('minimist') (process.argv.slice(2));
       const url = argv.url || 'http://localhost:8545';
@@ -72,13 +79,18 @@ class EnigmaSetup {
     }
   }
 
+  /*
+   * Simulates the setup of the principal node.
+   */
   async setup() {
+    // register the principal node
     this.principal.register()
     .then (result => {
       const event = result.logs[0];
       if (!event.args._success) {
         throw 'Unable to register worker';
       }
+      // set workers parameters
       return this.principal.setWorkersParams();
     })
     .then (result => {

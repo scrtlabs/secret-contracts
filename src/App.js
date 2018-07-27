@@ -1,7 +1,8 @@
 // App.js, Andrew Tam
-// Some notes:
-//  -Need to add encryption
+// Creates a simple dApp for secret voting.
+// Note: Need to add encryption
 
+// Import helper components
 import EnigmaSetup from './utils/getContracts';
 import Token from './Token';
 import Poll from './Poll';
@@ -11,6 +12,7 @@ import './App.css';
 
 class App extends Component {
 
+  /* CONSTRUCTOR */
   constructor(props) {
     super(props);
     this.state = {
@@ -25,7 +27,10 @@ class App extends Component {
     this.incrementCurPoll = this.incrementCurPoll.bind(this);
   }
 
-  componentWillMount() {
+  /*
+   * Invoked after the component is mounted.
+   */
+  componentDidMount() {
     let contractsObj = new EnigmaSetup();
     contractsObj.init().then(() => {
       contractsObj.setup();
@@ -33,19 +38,32 @@ class App extends Component {
     })
   }
 
+  /*
+   * Update the account used by the dApp.
+   */
   accountChange(event) {
     this.setState({curAccount: event.target.value});
   }
 
+  /*
+   * Update the token balances.
+   */
   changeTokenBalances(balances) {
     this.setState({ tokenBalances: balances});
   }
 
+  /*
+   * Increment the poll ID by 1.
+   */
   incrementCurPoll() {
     this.setState({ curPoll: parseInt(this.state.curPoll) + parseInt(1) });
   }
 
+  /*
+   * React render function.
+   */
   render() {
+    // wait for web3 and the contracts to be set up
     if (!this.state.contractsObj) {
       return <div> Loading web3... </div>
     }

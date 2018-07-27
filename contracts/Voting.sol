@@ -1,7 +1,8 @@
 // Voting.sol, Andrew Tam
-// NOTE: Anyone can vote and create a poll, prone to Sybil attacks.
-// Also, note that the creator of a poll can vote in the poll itself. Maybe
-// add functionality for having a cost to creating a poll.
+// TODO:
+//  -Separate token staking from voting
+//  -Timed polls
+
 pragma solidity ^0.4.24;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
@@ -12,9 +13,9 @@ contract Voting {
   using SafeMath for uint256;
 
   /* EVENTS */
-  event voteCasted(address voter, uint256 pollId, uint256 vote, uint256 weight);
-  event pollCreated(uint256 pollId, uint256 quorumPercentage, address creator, string description);
-  event pollPassed(bool status);
+  event voteCasted(address voter, uint256 pollID, uint256 vote, uint256 weight);
+  event pollCreated(uint256 pollID, uint256 quorumPercentage, address creator, string description);
+  event pollStatusUpdate(bool status);
 
   /* Determine the current state of a poll */
   enum PollStatus { IN_PROGRESS, TALLY, PASSED, REJECTED }
@@ -34,7 +35,6 @@ contract Voting {
   /* VOTER */
   struct Voter {
     bool hasVoted;
-    // vote will be encrypted in the future
     uint256 vote;
     uint256 weight;
   }
@@ -45,10 +45,14 @@ contract Voting {
   Enigma public enigma;
 
   /* CONSTRUCTOR */
-  constructor(address _token, address _enigmaAddress) public {
+  constructor(address _token, address _enigma) public {
+    require(_token != 0 && address(token) == 0);
+    require(_enigma != 0 && address(enigma) == 0);
     token = VotingToken(_token);
-    enigma = Enigma(_enigmaAddress);
+    enigma = Enigma(_enigma);
   }
+
+  /* POLL OPERATIONS */
 
   /*
    * Creates a new poll with a specified quorum percentage. Returns the poll ID of the new poll.
@@ -66,17 +70,20 @@ contract Voting {
     emit pollCreated(pollCount, _quorumPct, msg.sender, _description);
   }
 
-  function endPoll(uint256 _pollId) public validPoll(_pollId) {
-    require(msg.sender == polls[_pollId].creator, "User is not the creator of the poll.");
-    require(polls[_pollId].status == PollStatus.IN_PROGRESS, "Vote is not in progress.");
-    polls[_pollId].status = PollStatus.TALLY;
+  /*
+   * Ends a poll. Only the creator of a given poll can end that poll.
+   */
+  function endPoll(uint256 _pollID) public validPoll(_pollID) {
+    require(msg.sender == polls[_pollID].creator, "User is not the creator of the poll.");
+    require(polls[_pollID].status == PollStatus.IN_PROGRESS, "Vote is not in progress.");
+    polls[_pollID].status = PollStatus.TALLY;
   }
 
   /*
    * Modifier that checks for a valid poll ID.
    */
-  modifier validPoll(uint256 _pollId) {
-    require(_pollId > 0 && _pollId <= pollCount, "Not a valid poll Id.");
+  modifier validPoll(uint256 _pollID) {
+    require(_pollID > 0 && _pollID <= pollCount, "Not a valid poll Id.");
     _;
   }
 
@@ -84,11 +91,11 @@ contract Voting {
    * Checks if a poll was approved given the quorum percentage.
    * URGENT NOTE: The onlyEnigma modifier is currently commented out.
    */
-  function updatePollStatus(uint256 _pollId, uint256 _yeaVotes, uint256 _nayVotes) public validPoll(_pollId)
+  function updatePollStatus(uint256 _pollID, uint256 _yeaVotes, uint256 _nayVotes) public validPoll(_pollID)
     onlyEnigma() /* Add back for final launch */
     {
-    require(getPollStatus(_pollId) == PollStatus.TALLY, "Poll has not expired yet.");
-    Poll storage curPoll = polls[_pollId];
+    require(getPollStatus(_pollID) == PollStatus.TALLY, "Poll has not expired yet.");
+    Poll storage curPoll = polls[_pollID];
     curPoll.yeaVotes = _yeaVotes;
     curPoll.nayVotes = _nayVotes;
 
@@ -100,14 +107,14 @@ contract Voting {
       curPoll.status = PollStatus.REJECTED;
     }
 
-    emit pollPassed(pollStatus);
+    emit pollStatusUpdate(pollStatus);
   }
 
   /*
    * Gets the status of a poll.
    */
-  function getPollStatus(uint256 _pollId) public view validPoll(_pollId) returns (PollStatus status) {
-    return polls[_pollId].status;
+  function getPollStatus(uint256 _pollID) public view validPoll(_pollID) returns (PollStatus) {
+    return polls[_pollID].status;
   }
 
   /*
@@ -119,27 +126,34 @@ contract Voting {
   }
 
   /*
-   * The callable function that is computed by the SGX node.
+   * Gets the encrypted votes and weights for a given poll after it has ended.
    */
-  function countVotes(uint256 _pollId, uint256[] _votes, uint256[] _weights) public pure returns (uint256 pollId, uint256 yeaVotes, uint256 nayVotes) {
-    require(_votes.length == _weights.length);
-    for (uint256 i = 0; i < _votes.length; i++) {
-      if (_votes[i] == 0) nayVotes += _weights[i];
-      else yeaVotes += _weights[i];
+  function getInfoForPoll(uint256 _pollID) public validPoll(_pollID) returns (uint256[], uint256[]) {
+    require(getPollStatus(_pollID) != PollStatus.IN_PROGRESS);
+    Poll storage curPoll = polls[_pollID];
+    uint256 numVoters = curPoll.voters.length;
+    uint256[] memory votes = new uint256[](numVoters);
+    uint256[] memory weights = new uint256[](numVoters);
+    for (uint256 i = 0; i < numVoters; i++) {
+      address curVoter = curPoll.voters[i];
+      votes[i] = curPoll.voterInfo[curVoter].vote;
+      weights[i] = curPoll.voterInfo[curVoter].weight;
     }
-    return (_pollId, yeaVotes, nayVotes);
+    return (votes, weights);
   }
+
+  /* VOTE OPERATIONS */
 
   /*
    * Casts a vote for a given poll. Stakes ERC20 tokens as votes.
    * NOTE: _weight is denominated in *wei*.
    */
-  function castVote(uint256 _pollId, uint256 _encryptedVote, uint256 _weight) external validPoll(_pollId) {
-    require(getPollStatus(_pollId) == PollStatus.IN_PROGRESS, "Poll has expired.");
-    require(!userHasVoted(_pollId, msg.sender), "User has already voted.");
+  function castVote(uint256 _pollID, uint256 _encryptedVote, uint256 _weight) external validPoll(_pollID) {
+    require(getPollStatus(_pollID) == PollStatus.IN_PROGRESS, "Poll has expired.");
+    require(!userHasVoted(_pollID, msg.sender), "User has already voted.");
     stakeVotingTokens(msg.sender, _weight);
 
-    Poll storage curPoll = polls[_pollId];
+    Poll storage curPoll = polls[_pollID];
 
     curPoll.voterInfo[msg.sender] = Voter({
         hasVoted: true,
@@ -149,15 +163,29 @@ contract Voting {
 
     curPoll.voters.push(msg.sender);
 
-    emit voteCasted(msg.sender, _pollId, _encryptedVote, _weight);
+    emit voteCasted(msg.sender, _pollID, _encryptedVote, _weight);
+  }
+
+  /*
+   * The callable function that is computed by the SGX node.
+   */
+  function countVotes(uint256 _pollID, uint256[] _votes, uint256[] _weights) public pure returns (uint256 pollID, uint256 yeaVotes, uint256 nayVotes) {
+    require(_votes.length == _weights.length);
+    for (uint256 i = 0; i < _votes.length; i++) {
+      if (_votes[i] == 0) nayVotes += _weights[i];
+      else yeaVotes += _weights[i];
+    }
+    return (_pollID, yeaVotes, nayVotes);
   }
 
   /*
    * Checks if a user has voted for a specific poll.
    */
-  function userHasVoted(uint256 _pollId, address _user) public view validPoll(_pollId) returns (bool hasVoted) {
-    return (polls[_pollId].voterInfo[_user].hasVoted);
+  function userHasVoted(uint256 _pollID, address _user) public view validPoll(_pollID) returns (bool) {
+    return (polls[_pollID].voterInfo[_user].hasVoted);
   }
+
+  /* TOKEN OPERATIONS */
 
   /*
    * Internal function that stakes tokens for a given voter.
@@ -175,28 +203,12 @@ contract Voting {
    * Allows a voter to withdraw voting tokens after a poll has ended.
    * NOTE: _numTokens is denominated in *wei*.
    */
-  function withdrawTokens(uint256 _numTokens, uint256 _pollId) external validPoll(_pollId) {
-    require(getPollStatus(_pollId) == PollStatus.REJECTED ||  getPollStatus(_pollId) == PollStatus.PASSED, "Poll has not expired.");
-    require(userHasVoted(_pollId, msg.sender), "User did not vote in the poll.");
-    require(_numTokens <= polls[_pollId].voterInfo[msg.sender].weight, "User is trying to withdraw too many tokens.");
+  function withdrawTokens(uint256 _numTokens, uint256 _pollID) external validPoll(_pollID) {
+    require(getPollStatus(_pollID) == PollStatus.REJECTED ||  getPollStatus(_pollID) == PollStatus.PASSED, "Poll has not expired.");
+    require(userHasVoted(_pollID, msg.sender), "User did not vote in the poll.");
+    require(_numTokens <= polls[_pollID].voterInfo[msg.sender].weight, "User is trying to withdraw too many tokens.");
+    polls[_pollID].voterInfo[msg.sender].weight = polls[_pollID].voterInfo[msg.sender].weight.sub(_numTokens);
     require(token.transfer(msg.sender, _numTokens));
-  }
-
-  /*
-   * Gets the encrypted votes and weights for a given poll after it has ended.
-   */
-  function getInfoForPoll(uint256 _pollId) public validPoll(_pollId) returns (uint256[], uint256[]) {
-    require(getPollStatus(_pollId) != PollStatus.IN_PROGRESS);
-    Poll storage curPoll = polls[_pollId];
-    uint256 numVoters = curPoll.voters.length;
-    uint256[] memory votes = new uint256[](numVoters);
-    uint256[] memory weights = new uint256[](numVoters);
-    for (uint256 i = 0; i < numVoters; i++) {
-      address curVoter = curPoll.voters[i];
-      votes[i] = curPoll.voterInfo[curVoter].vote;
-      weights[i] = curPoll.voterInfo[curVoter].weight;
-    }
-    return (votes, weights);
   }
 
 }

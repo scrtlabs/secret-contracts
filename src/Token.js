@@ -1,9 +1,13 @@
+// Token.js, Andrew Tam
+
 import React, { Component } from 'react';
+import './App.css';
 
 const GAS = 4712388;
 
 class Token extends Component {
 
+  /* CONSTRUCTOR */
   constructor(props) {
     super(props);
     this.curTokenPurchase;
@@ -13,6 +17,9 @@ class Token extends Component {
     this.withdraw = this.withdraw.bind(this);
   }
 
+  /*
+   * Purchase tokens.
+   */
   tokenPurchase(event){
     if (event) event.preventDefault();
     // Contribute to the Mintable Token Factory
@@ -24,6 +31,7 @@ class Token extends Component {
     })
     .then(result => {
       console.log("Update the state token balances")
+      // Update the App state
       const balances = this.props.tokenBalances;
       balances[this.props.curAccount] = parseInt(this.props.tokenBalances[this.props.curAccount]) + parseInt(this.curTokenPurchase.value);
       this.props.update(balances);
@@ -42,14 +50,19 @@ class Token extends Component {
     })
   }
 
+  /*
+   * Allow a user to withdraw tokens.
+   */
   withdraw(event) {
     if (event) event.preventDefault();
+    // withdraw tokens
     this.props.objects.Voting.withdrawTokens(
       this.props.objects.web3.utils.toWei(String(this.withdrawAmount.value), "Ether"), parseInt(this.withdrawPollID.value), {
         from: this.props.objects.accounts[this.props.curAccount],
         gas: GAS
     })
     .then(result => {
+      // update the app state
       const balances = this.props.tokenBalances;
       balances[this.props.curAccount] = parseInt(this.props.tokenBalances[this.props.curAccount]) + parseInt(this.withdrawAmount.value);
       this.props.update(balances);

@@ -1,6 +1,6 @@
 # Secret Contracts
 
-This repository showcases secret contracts that utilize the Enigma Protocol such as secret voting, secret auctions, and secret TCRs. The contracts are written in Solidity and the dApp front-end uses React and the Enigma JS library.
+This repository showcases example secret contracts such as secret voting, secret TCRs, and secret auctions. The contracts are written in Solidity and the dApp front-end uses React.
 
 # Design Features:
 

@@ -1,10 +1,9 @@
-// INCOMPLETE
-
 const VotingToken = artifacts.require("./VotingToken.sol");
 const TokenFactory = artifacts.require("./TokenFactory.sol");
 const Voting = artifacts.require("./Voting.sol");
-const EnigmaToken = artifacts.require("../enigma-contract/contracts/EnigmaToken.sol");
-const Enigma = artifacts.require("../enigma-contract/contracts/Enigma.sol");
+const EnigmaToken = artifacts.require("./EnigmaToken.sol");
+const Enigma = artifacts.require("./Enigma.sol");
+const Registry = artifacts.require("./Registry.sol")
 const data = require('../data/data');
 
 module.exports = function(deployer) {
@@ -27,5 +26,8 @@ module.exports = function(deployer) {
     })
     .then(() => {
       return VotingToken.deployed().then(instance => instance.transferOwnership(TokenFactory.address))
+    })
+    .then(() => {
+      return deployer.deploy(Registry, VotingToken.address, Voting.address, "Enigma Registry");
     })
 };

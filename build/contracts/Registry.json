@@ -1,0 +1,170 @@
+{
+  "contractName": "Registry",
+  "abi": [],
+  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3006080604052600080fd00a165627a7a72305820ab12be1136e5568cb55f1a0772a9339d563bc593cfb0bb17e427bb0dbab78e010029",
+  "deployedBytecode": "0x6080604052600080fd00a165627a7a72305820ab12be1136e5568cb55f1a0772a9339d563bc593cfb0bb17e427bb0dbab78e010029",
+  "sourceMap": "383:4007:1:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;383:4007:1;;;;;;;",
+  "deployedSourceMap": "383:4007:1:-;;;;;",
+  "source": "// Registry.sol, Andrew Tam\n// Heavily inspired from: https://github.com/skmgoldin/tcr/blob/master/contracts/Registry.sol\n// Notes:\n// -Currently no parameterizer\n// -Missing function for increasing stake(needed for touch and remove edge case)\n\npragma solidity ^0.4.24;\n\nimport \"openzeppelin-solidity/contracts/math/SafeMath.sol\";\nimport \"./VotingToken.sol\";\nimport \"./Voting.sol\";\n\ncontract Registry {\n\n  /* using SafeMath for uint256;\n\n  event Application(address owner, string candidate, uint256 stake);\n  event Whitelisted(bytes32 listingHash);\n\n  enum ListingStatus { ABSENT, APPLYING, WHITELISTED }\n  enum ChallengeStatus { IN_PROGRESS, REJECTED, PASSED }\n\n  // need a way to end application status\n  struct Listing {\n    address owner;\n    string data;\n    uint256 stake;\n    uint256 applyExpire;\n    ListingStatus status;\n    uint256 challengeID;\n  }\n\n  struct Challenge {\n    address owner;\n    uint256 pollID;\n    uint256 listingID;\n    uint256 stake;\n    string data;\n    ChallengeStatus status;\n  }\n\n  // Store state of registry\n  mapping(bytes32 => Listing) public listings; // keys are the keccak hash of the candidate string\n  mapping(uint256 => Challenge) public challenges;\n\n  // Simulate the parameterizer for now\n  uint256 public minDeposit = 10;\n  uint256 public dispensationPct = 10;\n  uint256 public voteQuorum = 50;\n  uint256 public applyStageLen = 60; // 60 seconds -> 1 minute apply time\n\n  // Setup\n  VotingToken public token;\n  Voting public voting;\n  string public name;\n\n  // CONSTRUCTOR\n  constructor(address _token, address _voting, string _name) public {\n    require(_token != 0 && address(token) == 0);\n    require(_voting != 0 && address(voting) == 0);\n    token = VotingToken(_token);\n    voting = Voting(_voting);\n    name = _name;\n  }\n\n  // LISTING RELATED FUNCTIONS\n\n  // NOTE: User needs to approve token transfer beforehand.\n  function apply(uint256 _amount, string _candidate) external returns(bytes32) {\n    // make sure the applicant has enough stake\n    require(_amount >= minDeposit);\n    bytes32 listingHash = keccak256(_candidate);\n\n    // make sure that there isn't a duplicate application or that the candidate is already on the registry\n    require(getListingStatus(listingHash) == ListingStatus.ABSENT);\n\n    // create a new listing\n    listings[listingHash] = Listing({\n      owner: msg.sender,\n      data: _candidate,\n      stake: _amount,\n      status: ListingStatus.APPLYING,\n      applyExpire: block.timestamp.add(applyStageLen)\n    });\n\n    // transfer stake and emit event\n    require(token.transferFrom(msg.sender, this, _amount));\n    emit Application(msg.sender, _candidate, _amount);\n    return listingHash;\n  }\n\n  function updateListingStatus(bytes32 _listingHash) external {\n    Listing storage listing = listings[_listingHash];\n    require(now >= listing.applyExpire);\n    require(msg.sender == listing.owner);\n    require(listing.status == ListingStatus.APPLYING);\n    require(listing.challengeID == 0 || challenges[listing.challengeID].status == ChallengeStatus.REJECTED);\n    listing.status = ListingStatus.WHITELISTED;\n    emit Whitelisted(_listingHash);\n  }\n\n  function exit(bytes32 _listingHash) external {\n    require(getListingStatus(_listingHash) == ListingStatus.WHITELISTED);\n\n    Listing storage listing = listings[_listingHash];\n    require(msg.sender == listing.owner);\n\n    uint256 amount = listing.stake;\n    delete listings[_listingHash];\n\n    require(token.transfer(msg.sender, amount));\n  }\n\n  // CHALLENGE RELATED FUNCTIONS\n  function challenge(bytes32 _listingHash, string _data) {\n    Listing storage listing = listings[_listingHash];\n    require(listing.status != ListingStatus.ABSENT);\n    require(listing.challengeID == 0 || getChallengeStatus(listing.challengeID) == ChallengeStatus.REJECTED);\n\n\n    /*\n    -listing should be apply or WHITELISTED and there should not be a challenge for it already\n    -stake should match listing stake\n    -create timed poll based on parameterizer\n    \n\n\n  }\n\n  function voteinChallenge() {\n\n  }\n\n  //HELPERS\n  function getListingStatus(bytes32 _listingHash) public returns (ListingStatus) {\n    return listings[_listingHash].status;\n  }\n\n  function getListingData(bytes32 _listingHash) public returns (string) {\n    return listings[_listingHash].data;\n  }\n\n  function getChallengeStatus(uint256 _challengeID) {\n    return challenges[_challengeID].status;\n  } */\n\n}\n",
+  "sourcePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/Registry.sol",
+  "ast": {
+    "absolutePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/Registry.sol",
+    "exportedSymbols": {
+      "Registry": [
+        1124
+      ]
+    },
+    "id": 1125,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1120,
+        "literals": [
+          "solidity",
+          "^",
+          "0.4",
+          ".24"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "245:24:1"
+      },
+      {
+        "absolutePath": "openzeppelin-solidity/contracts/math/SafeMath.sol",
+        "file": "openzeppelin-solidity/contracts/math/SafeMath.sol",
+        "id": 1121,
+        "nodeType": "ImportDirective",
+        "scope": 1125,
+        "sourceUnit": 2038,
+        "src": "271:59:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/VotingToken.sol",
+        "file": "./VotingToken.sol",
+        "id": 1122,
+        "nodeType": "ImportDirective",
+        "scope": 1125,
+        "sourceUnit": 1854,
+        "src": "331:27:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/Voting.sol",
+        "file": "./Voting.sol",
+        "id": 1123,
+        "nodeType": "ImportDirective",
+        "scope": 1125,
+        "sourceUnit": 1839,
+        "src": "359:22:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 1124,
+        "linearizedBaseContracts": [
+          1124
+        ],
+        "name": "Registry",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 1125,
+        "src": "383:4007:1"
+      }
+    ],
+    "src": "245:4146:1"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/Registry.sol",
+    "exportedSymbols": {
+      "Registry": [
+        1124
+      ]
+    },
+    "id": 1125,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1120,
+        "literals": [
+          "solidity",
+          "^",
+          "0.4",
+          ".24"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "245:24:1"
+      },
+      {
+        "absolutePath": "openzeppelin-solidity/contracts/math/SafeMath.sol",
+        "file": "openzeppelin-solidity/contracts/math/SafeMath.sol",
+        "id": 1121,
+        "nodeType": "ImportDirective",
+        "scope": 1125,
+        "sourceUnit": 2038,
+        "src": "271:59:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/VotingToken.sol",
+        "file": "./VotingToken.sol",
+        "id": 1122,
+        "nodeType": "ImportDirective",
+        "scope": 1125,
+        "sourceUnit": 1854,
+        "src": "331:27:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/Voting.sol",
+        "file": "./Voting.sol",
+        "id": 1123,
+        "nodeType": "ImportDirective",
+        "scope": 1125,
+        "sourceUnit": 1839,
+        "src": "359:22:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 1124,
+        "linearizedBaseContracts": [
+          1124
+        ],
+        "name": "Registry",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 1125,
+        "src": "383:4007:1"
+      }
+    ],
+    "src": "245:4146:1"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.24+commit.e67f0147.Emscripten.clang"
+  },
+  "networks": {
+    "5777": {
+      "events": {},
+      "links": {},
+      "address": "0xfb88de099e13c3ed21f80a7a1e49f8caecf10df6",
+      "transactionHash": "0x406c180d02231c94eb728659a4583fb864bd083adec7e839c43da8d9964f248e"
+    }
+  },
+  "schemaVersion": "2.0.1",
+  "updatedAt": "2018-07-27T17:39:40.325Z"
+}

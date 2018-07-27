@@ -1,10 +1,14 @@
+// Vote.js, Andrew Tam
+
 import React, { Component } from 'react';
+import './App.css';
 
 const engUtils = require('../enigma-lib/enigma-utils');  // for simulating principal node
 const GAS = 4712388;
 
 class Vote extends Component {
 
+  /* CONSTRUCTOR */
   constructor(props) {
     super(props);
     this.curVote;
@@ -13,15 +17,20 @@ class Vote extends Component {
     this.vote = this.vote.bind(this);
   }
 
-  // TODO: Add encryption
+  /*
+   * Allows a user to vote for a given poll.
+   * TODO: Add encryption
+   */
   vote(event) {
     if (event) event.preventDefault();
+    // cast vote
     this.props.objects.Voting.castVote(parseInt(this.votePollID.value), parseInt(this.curVote.value),
       this.props.objects.web3.utils.toWei(String(parseInt(this.curWeight.value)), "ether"), {
       from: this.props.objects.accounts[this.props.curAccount],
       gas: GAS
     })
     .then(result => {
+      // update app state
       const balances = this.props.tokenBalances;
       balances[this.props.curAccount] = parseInt(this.props.tokenBalances[this.props.curAccount]) - parseInt(this.curWeight.value);
       this.props.update(balances);
