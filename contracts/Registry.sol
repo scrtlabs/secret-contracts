@@ -40,6 +40,7 @@ contract Registry {
   }
 
   // Store state of registry
+  uint256[] public listingIndex;
   mapping(bytes32 => Listing) public listings; // keys are the keccak hash of the candidate string
   mapping(uint256 => Challenge) public challenges;
 
@@ -74,13 +75,15 @@ contract Registry {
     // make sure that there isn't a duplicate application or that the candidate is already on the registry
     require(getListingStatus(listingHash) == ListingStatus.ABSENT);
 
+
     // create a new listing
     listings[listingHash] = Listing({
       owner: msg.sender,
       data: _candidate,
       stake: _amount,
       status: ListingStatus.APPLYING,
-      applyExpire: block.timestamp.add(applyStageLen)
+      applyExpire: block.timestamp.add(applyStageLen),
+      challengeID: 0
     });
 
     // transfer stake and emit event
@@ -140,7 +143,7 @@ contract Registry {
     return listings[_listingHash].data;
   }
 
-  function getChallengeStatus(uint256 _challengeID) {
+  function getChallengeStatus(uint256 _challengeID) returns (ChallengeStatus) {
     return challenges[_challengeID].status;
   }
 
