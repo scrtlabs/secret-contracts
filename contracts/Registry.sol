@@ -15,25 +15,26 @@ contract Registry {
   using SafeMath for uint256;
 
   event Application(address owner, string candidate, uint256 stake);
+  event Challenge(address owner, bytes32 listingHash);
   event Whitelisted(bytes32 listingHash);
 
   enum ListingStatus { ABSENT, APPLYING, WHITELISTED }
-  enum ChallengeStatus { IN_PROGRESS, REJECTED, PASSED }
+  enum ChallengeStatus { IN_PROGRESS, PASSED, REJECTED }
 
   // need a way to end application status
   struct Listing {
     address owner;
     string data;
     uint256 stake;
-    uint256 applyExpire;
     ListingStatus status;
+    uint256 applyExpire;
     uint256 challengeID;
   }
 
   struct Challenge {
     address owner;
     uint256 pollID;
-    uint256 listingID;
+    uint256 listingHash;
     uint256 stake;
     string data;
     ChallengeStatus status;
@@ -80,7 +81,8 @@ contract Registry {
       data: _candidate,
       stake: _amount,
       status: ListingStatus.APPLYING,
-      applyExpire: block.timestamp.add(applyStageLen)
+      applyExpire: block.timestamp.add(applyStageLen),
+      challengeID: 0
     });
 
     // transfer stake and emit event
@@ -111,24 +113,52 @@ contract Registry {
     require(token.transfer(msg.sender, amount));
   }
 
+
+  /* EVERYTHING UNDER HERE IS VERY UNTESTED */
+
   /* CHALLENGE RELATED FUNCTIONS */
-  function challenge(bytes32 _listingHash, string _data) {
+  function challenge(bytes32 _listingHash, string _data) external return (uint256) {
     Listing storage listing = listings[_listingHash];
     require(listing.status != ListingStatus.ABSENT);
     require(listing.challengeID == 0 || getChallengeStatus(listing.challengeID) == ChallengeStatus.REJECTED);
 
+    // create new poll
+    // NOTE: need to add timed poll later
+    uint256 pollID = voting.createPoll(voteQuorum, _data);
 
-    /*
-    -listing should be apply or WHITELISTED and there should not be a challenge for it already
-    -stake should match listing stake
-    -create timed poll based on parameterizer
-    */
+    // create new challenge
+    challenges[pollID] = Challenge({
+      owner: msg.sender,
+      pollID: pollID,
+      listingHash: _listingHash,
+      stake: listing.stake,
+      data: _data,
+      status: ChallengeStatus.IN_PROGRESS
+    });
 
+    listing.challengeID = pollID;
 
+    // transfer stake from challenger
+    require(token.transferFrom(msg.sender, this, listing.stake));
+    emit Challenge(msg.sender, _listingHash);
+    return pollID;
   }
 
-  function voteinChallenge() {
+  /* THIS IS TEMPORARY WHILE WE HAVE NO TIMED POLLS */
+  function endChallengePoll(uint256 _pollID) external {
+    voting.endPoll(_pollID);
+  }
 
+  function updateChallengeStatus(uint256 _pollID) external {
+    require(getChallengeStatus(_pollID) == ChallengeStatus.IN_PROGRESS);
+    uint256 pollStatus = voting.getPollStatus(_pollID);
+    require(pollStatus > 1);  // make sure poll has ended
+    if (pollStatus == 2) {
+      challenges[_pollID].status = ChallengeStatus.PASSED;
+    }
+    else {
+      challenges[_pollID].status = ChallengeStatus.REJECTED;
+    }
   }
 
   /* HELPERS */
@@ -140,7 +170,7 @@ contract Registry {
     return listings[_listingHash].data;
   }
 
-  function getChallengeStatus(uint256 _challengeID) {
+  function getChallengeStatus(uint256 _challengeID) public returns (ChallengeStatus) {
     return challenges[_challengeID].status;
   }
 
