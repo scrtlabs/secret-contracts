@@ -41,6 +41,7 @@ contract Registry {
   }
 
   // Store state of registry
+  uint256[] public listingIndex;
   mapping(bytes32 => Listing) public listings; // keys are the keccak hash of the candidate string
   mapping(uint256 => Challenge) public challenges;
 
@@ -74,6 +75,7 @@ contract Registry {
 
     // make sure that there isn't a duplicate application or that the candidate is already on the registry
     require(getListingStatus(listingHash) == ListingStatus.ABSENT);
+
 
     // create a new listing
     listings[listingHash] = Listing({
@@ -170,7 +172,11 @@ contract Registry {
     return listings[_listingHash].data;
   }
 
+<<<<<<< HEAD
   function getChallengeStatus(uint256 _challengeID) public returns (ChallengeStatus) {
+=======
+  function getChallengeStatus(uint256 _challengeID) returns (ChallengeStatus) {
+>>>>>>> 6cbbd482c1c87bae253a5ea82721ffb70211d769
     return challenges[_challengeID].status;
   }
 
