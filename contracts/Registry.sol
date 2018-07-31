@@ -148,6 +148,7 @@ contract Registry {
 
   /* THIS IS TEMPORARY WHILE WE HAVE NO TIMED POLLS */
   function endChallengePoll(uint256 _pollID) external {
+    require(msg.sender == challenges[_pollID].owner);
     voting.endPoll(_pollID);
   }
 
@@ -172,11 +173,7 @@ contract Registry {
     return listings[_listingHash].data;
   }
 
-<<<<<<< HEAD
   function getChallengeStatus(uint256 _challengeID) public returns (ChallengeStatus) {
-=======
-  function getChallengeStatus(uint256 _challengeID) returns (ChallengeStatus) {
->>>>>>> 6cbbd482c1c87bae253a5ea82721ffb70211d769
     return challenges[_challengeID].status;
   }
 
