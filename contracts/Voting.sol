@@ -57,7 +57,7 @@ contract Voting {
   /*
    * Creates a new poll with a specified quorum percentage. Returns the poll ID of the new poll.
    */
-  function createPoll(uint256 _quorumPct, string _description) external {
+  function createPoll(uint256 _quorumPct, string _description) external returns(uint256) {
     require(_quorumPct <= 100, "Quorum Percentage must be less than or equal to 100%");
     pollCount++;
 
@@ -68,6 +68,7 @@ contract Voting {
     curPoll.description = _description;
 
     emit pollCreated(pollCount, _quorumPct, msg.sender, _description);
+    return pollCount;
   }
 
   /*
@@ -203,12 +204,12 @@ contract Voting {
    * Allows a voter to withdraw voting tokens after a poll has ended.
    * NOTE: _numTokens is denominated in *wei*.
    */
-  function withdrawTokens(uint256 _numTokens, uint256 _pollID) external validPoll(_pollID) {
+  function withdrawTokens(uint256 _pollID) external validPoll(_pollID) returns(uint256) {
     require(getPollStatus(_pollID) == PollStatus.REJECTED ||  getPollStatus(_pollID) == PollStatus.PASSED, "Poll has not expired.");
     require(userHasVoted(_pollID, msg.sender), "User did not vote in the poll.");
-    require(_numTokens <= polls[_pollID].voterInfo[msg.sender].weight, "User is trying to withdraw too many tokens.");
-    polls[_pollID].voterInfo[msg.sender].weight = polls[_pollID].voterInfo[msg.sender].weight.sub(_numTokens);
-    require(token.transfer(msg.sender, _numTokens));
+    uint256 weight = polls[_pollID].voterInfo[msg.sender].weight;
+    require(token.transfer(msg.sender, weight));
+    return weight;
   }
 
 }

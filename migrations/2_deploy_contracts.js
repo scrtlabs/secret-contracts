@@ -27,7 +27,7 @@ module.exports = function(deployer) {
     .then(() => {
       return VotingToken.deployed().then(instance => instance.transferOwnership(TokenFactory.address))
     })
-    .then(() => {
-      return deployer.deploy(Registry, VotingToken.address, Voting.address, "Enigma Registry");
-    })
+    // .then(() => {
+    //   return deployer.deploy(Registry, VotingToken.address, Voting.address, "Enigma Registry");
+    // })
 };

@@ -15,7 +15,7 @@ contract Registry {
   using SafeMath for uint256;
 
   event Application(address owner, string candidate, uint256 stake);
-  event Challenge(address owner, bytes32 listingHash);
+  event newChallenge(address owner, bytes32 listingHash);
   event Whitelisted(bytes32 listingHash);
 
   enum ListingStatus { ABSENT, APPLYING, WHITELISTED }
@@ -34,7 +34,7 @@ contract Registry {
   struct Challenge {
     address owner;
     uint256 pollID;
-    uint256 listingHash;
+    bytes32 listingHash;
     uint256 stake;
     string data;
     ChallengeStatus status;
@@ -119,7 +119,7 @@ contract Registry {
   /* EVERYTHING UNDER HERE IS VERY UNTESTED */
 
   /* CHALLENGE RELATED FUNCTIONS */
-  function challenge(bytes32 _listingHash, string _data) external return (uint256) {
+  function challenge(bytes32 _listingHash, string _data) external returns (uint256) {
     Listing storage listing = listings[_listingHash];
     require(listing.status != ListingStatus.ABSENT);
     require(listing.challengeID == 0 || getChallengeStatus(listing.challengeID) == ChallengeStatus.REJECTED);
@@ -142,7 +142,7 @@ contract Registry {
 
     // transfer stake from challenger
     require(token.transferFrom(msg.sender, this, listing.stake));
-    emit Challenge(msg.sender, _listingHash);
+    emit newChallenge(msg.sender, _listingHash);
     return pollID;
   }
 
@@ -154,7 +154,7 @@ contract Registry {
 
   function updateChallengeStatus(uint256 _pollID) external {
     require(getChallengeStatus(_pollID) == ChallengeStatus.IN_PROGRESS);
-    uint256 pollStatus = voting.getPollStatus(_pollID);
+    uint256 pollStatus = uint(voting.getPollStatus(_pollID));
     require(pollStatus > 1);  // make sure poll has ended
     if (pollStatus == 2) {
       challenges[_pollID].status = ChallengeStatus.PASSED;

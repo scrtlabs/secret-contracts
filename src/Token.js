@@ -11,7 +11,6 @@ class Token extends Component {
   constructor(props) {
     super(props);
     this.curTokenPurchase;
-    this.withdrawAmount;
     this.withdrawPollID;
     this.tokenPurchase = this.tokenPurchase.bind(this);
     this.withdraw = this.withdraw.bind(this);
@@ -56,17 +55,17 @@ class Token extends Component {
   withdraw(event) {
     if (event) event.preventDefault();
     // withdraw tokens
-    this.props.objects.Voting.withdrawTokens(
-      this.props.objects.web3.utils.toWei(String(this.withdrawAmount.value), "Ether"), parseInt(this.withdrawPollID.value), {
+    return this.props.objects.Voting.withdrawTokens.call(parseInt(this.withdrawPollID.value), {
         from: this.props.objects.accounts[this.props.curAccount],
         gas: GAS
     })
     .then(result => {
       // update the app state
       const balances = this.props.tokenBalances;
-      balances[this.props.curAccount] = parseInt(this.props.tokenBalances[this.props.curAccount]) + parseInt(this.withdrawAmount.value);
+      balances[this.props.curAccount] = this.props.objects.web3.utils.fromWei(String(result), 'ether');
+
       this.props.update(balances);
-      alert("You have successfully withdrawn " + this.withdrawAmount.value + " tokens.");
+      alert("You have successfully withdrawn tokens.");
       document.getElementById("withdraw_form").reset();
     })
     .catch(error => {
@@ -87,10 +86,7 @@ class Token extends Component {
         </form> <br />
 
         <form onSubmit={this.withdraw} id="withdraw_form">
-          <label> Insert the number of Voting Tokens you would like to withdraw: </label>
-          <input type="text" ref={(element) => { this.withdrawAmount = element }} />
-
-          <label> from poll ID: </label>
+          <label> Withdraw tokens from poll ID: </label>
           <input type="text" ref={(element) => { this.withdrawPollID = element }} />
           <button> Submit </button>
         </form>
