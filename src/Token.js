@@ -11,9 +11,11 @@ class Token extends Component {
   constructor(props) {
     super(props);
     this.curTokenPurchase;
-    this.withdrawPollID;
+    this.withdrawValue;
+    this.stakeAmount;
     this.tokenPurchase = this.tokenPurchase.bind(this);
     this.withdraw = this.withdraw.bind(this);
+    this.stakeTokens = this.stakeTokens.bind(this);
   }
 
   /*
@@ -31,18 +33,12 @@ class Token extends Component {
     .then(result => {
       console.log("Update the state token balances")
       // Update the App state
-      const balances = this.props.tokenBalances;
+      let balances = this.props.tokenBalances;
       balances[this.props.curAccount] = parseInt(this.props.tokenBalances[this.props.curAccount]) + parseInt(this.curTokenPurchase.value);
-      this.props.update(balances);
+      this.props.updateToken(balances);
 
       alert('You purchased '+ this.curTokenPurchase.value + ' tokens.');
       document.getElementById("token_form").reset();
-
-      // Approve the token transfer
-      this.props.objects.VotingToken.approve(this.props.objects.Voting.address, this.props.objects.web3.utils.toWei(String(balances[this.props.curAccount]), "ether"), {
-        from: this.props.objects.accounts[this.props.curAccount],
-        gas: GAS
-      })
     })
     .catch(error => {
       alert("User does not have enough Ether. Please enter a smaller amount.");
@@ -55,22 +51,66 @@ class Token extends Component {
   withdraw(event) {
     if (event) event.preventDefault();
     // withdraw tokens
-    return this.props.objects.Voting.withdrawTokens.call(parseInt(this.withdrawPollID.value), {
+    let amount = this.props.objects.web3.utils.toWei(this.withdrawValue.value, "ether");
+    return this.props.objects.Voting.withdrawTokens(String(amount), {
         from: this.props.objects.accounts[this.props.curAccount],
         gas: GAS
     })
     .then(result => {
       // update the app state
-      const balances = this.props.tokenBalances;
-      balances[this.props.curAccount] = this.props.objects.web3.utils.fromWei(String(result), 'ether');
+      let balances = this.props.tokenBalances;
+      balances[this.props.curAccount] += parseInt(this.withdrawValue.value);
+      this.props.updateToken(balances);
 
-      this.props.update(balances);
+      let staked = this.props.stakedTokens;
+      staked[this.props.curAccount] -= parseInt(this.withdrawValue.value);
+      this.props.updateStake(staked);
+
+
       alert("You have successfully withdrawn tokens.");
       document.getElementById("withdraw_form").reset();
     })
     .catch(error => {
       console.log(error);
-      alert("Either you are trying to withdraw too many tokens, you did not vote in the poll, the poll ID is invalid, or it has not ended.");
+      alert("You are trying to withdraw too many tokens.");
+    })
+  }
+
+  stakeTokens(event) {
+    if (event) event.preventDefault();
+    // approve transfer
+    this.props.objects.VotingToken.approve(this.props.objects.Voting.address,
+      this.props.objects.web3.utils.toWei(this.stakeAmount.value, "ether"), {
+      from: this.props.objects.accounts[this.props.curAccount],
+      gas: GAS
+    })
+    .then(result => {
+      // stake tokens
+      let amount = this.props.objects.web3.utils.toWei(this.stakeAmount.value, "ether");
+      return this.props.objects.Voting.stakeVotingTokens(String(amount), {
+        from: this.props.objects.accounts[this.props.curAccount],
+        gas: GAS
+      })
+    })
+    .then(result => {
+      // update the app state
+
+      // update token balance
+      let balances = this.props.tokenBalances;
+      balances[this.props.curAccount] -= parseInt(this.stakeAmount.value);
+      this.props.updateToken(balances);
+
+      // update staked token balance
+      let staked = this.props.stakedTokens;
+      staked[this.props.curAccount] += parseInt(this.stakeAmount.value)
+      this.props.updateStake(staked);
+
+      alert("You have successfully staked tokens.");
+      document.getElementById("stake_form").reset();
+    })
+    .catch(error => {
+      console.log(error);
+      alert("You are trying to stake too many tokens.");
     })
   }
 
@@ -85,9 +125,15 @@ class Token extends Component {
           <button> Submit </button>
         </form> <br />
 
+        <form onSubmit={this.stakeTokens} id="stake_form">
+          <label> Insert the number of Voting Tokens you would like to stake: </label>
+          <input type="text" ref={(element) => { this.stakeAmount = element }} />
+          <button> Submit </button>
+        </form> <br />
+
         <form onSubmit={this.withdraw} id="withdraw_form">
-          <label> Withdraw tokens from poll ID: </label>
-          <input type="text" ref={(element) => { this.withdrawPollID = element }} />
+          <label> Insert the number of Voting Tokens you would like to withdraw: </label>
+          <input type="text" ref={(element) => { this.withdrawValue = element }} />
           <button> Submit </button>
         </form>
 

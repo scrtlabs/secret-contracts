@@ -1,9 +1,4 @@
-/*
- * Biggest issue: Converting from wei to token weights. Have to make sure the user cannot withdrawal more than allowed
- * since we're dealing with really large numbers(I think we get weird floating point arithmetic at some point).
- */
-
-var Voting = artifacts.require("./Voting.sol");
+var Voting = artifacts.require("./VotingAlt.sol");
 var VotingToken = artifacts.require("./VotingToken.sol");
 var TokenFactory = artifacts.require("./TokenFactory.sol");
 var Enigma = artifacts.require("./Enigma.sol");
@@ -25,18 +20,29 @@ contract('TokenFactory', async(accounts) => {
       const token = await VotingToken.deployed();
       const approveResult = await token.approve(voting.address, web3.toWei(10, "ether"), {from:web3.eth.accounts[1]});
 
-      // 3. Create poll from account 0.
-      // NOTE: Second argument of createPoll is in seconds.
-      await voting.createPoll(50, "Test Poll", {from: web3.eth.accounts[0]});
+      // 3. Create poll 1 from account 0.
+      await voting.createPoll(50, "Test Poll 1", {from: web3.eth.accounts[0]});
       let status = await voting.getPollStatus(1);
       const pollId = await voting.pollCount.call();
       assert.equal(status, 0, "Poll has expired.");
       assert.equal(pollId, 1, "Poll ID is not 1.");
 
-      // 4. Vote in poll with account 1.
+      // 3. Create poll 2 from account 0.
+      await voting.createPoll(50, "Test Poll 2", {from: web3.eth.accounts[0]});
+
+      // 4. Stake 1 voting tokens.
+      await voting.stakeVotingTokens(web3.toWei(10, "ether"), {from:web3.eth.accounts[1]});
+
+      // 4. Vote in poll 1 with account 1.
       // NOTE for TESTING: Change pollId and/or Ether amount for testing.
-      await voting.castVote(1, 1, web3.toWei(10, "ether"), {from: web3.eth.accounts[1]});
-      const hasVoted = await voting.userHasVoted(1, web3.eth.accounts[1]);
+      await voting.castVote(1, 1, web3.toWei(8, "ether"), {from: web3.eth.accounts[1]});
+      let hasVoted = await voting.userHasVoted(1, web3.eth.accounts[1]);
+      assert.equal(hasVoted, true, "User vote boolean did not change.");
+
+      // 4. Vote in poll 2 with account 1.
+      // NOTE for TESTING: Change pollId and/or Ether amount for testing.
+      await voting.castVote(2, 1, web3.toWei(2, "ether"), {from: web3.eth.accounts[1]});
+      hasVoted = await voting.userHasVoted(2, web3.eth.accounts[1]);
       assert.equal(hasVoted, true, "User vote boolean did not change.");
 
       // 5. End poll from account 0.
@@ -57,9 +63,9 @@ contract('TokenFactory', async(accounts) => {
 
       // 7. Withdraw tokens.
       // NOTE: Change withdrawal amount for testing.
-      await voting.withdrawTokens(web3.toWei(10, "ether"), 1, {from: web3.eth.accounts[1]});
+      await voting.withdrawTokens(web3.toWei(8, "ether"), {from: web3.eth.accounts[1]});
       amount = await tokenInstance.balanceOf(accounts[1]);
-      assert.equal(amount.toNumber(), web3.toWei(10, "ether"), "Contributer did not withdraw 10 tokens.");
+      assert.equal(amount.toNumber(), web3.toWei(2, "ether"), "Contributer did not withdraw 2 tokens.");
 
     });
   });

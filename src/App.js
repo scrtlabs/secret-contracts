@@ -19,10 +19,12 @@ class App extends Component {
       curPoll: 0,  // global counter of which poll ID were are on
       curAccount: 0,
       tokenBalances: new Array(10).fill(0),
+      stakedTokens: new Array(10).fill(0),
       contractsObj: null
     }
 
     this.changeTokenBalances = this.changeTokenBalances.bind(this);
+    this.changeStakedTokens = this.changeStakedTokens.bind(this);
     this.accountChange = this.accountChange.bind(this);
     this.incrementCurPoll = this.incrementCurPoll.bind(this);
   }
@@ -50,6 +52,10 @@ class App extends Component {
    */
   changeTokenBalances(balances) {
     this.setState({ tokenBalances: balances});
+  }
+
+  changeStakedTokens(tokens) {
+    this.setState({ stakedTokens: tokens});
   }
 
   /*
@@ -88,10 +94,12 @@ class App extends Component {
             </select>
           </label> <br />
           <label> Current Token Balance: {this.state.tokenBalances[this.state.curAccount]} </label>< br />
+          <label> Number of Staked Tokens: {this.state.stakedTokens[this.state.curAccount]} </label>
         </div>
         <hr />
 
-        <Token objects={this.state.contractsObj} update={this.changeTokenBalances} tokenBalances={this.state.tokenBalances} curAccount={this.state.curAccount}/>
+        <Token objects={this.state.contractsObj} updateToken={this.changeTokenBalances} updateStake={this.changeStakedTokens}
+          tokenBalances={this.state.tokenBalances} stakedTokens={this.state.stakedTokens} curAccount={this.state.curAccount}/>
         <hr />
         <Poll objects={this.state.contractsObj} update={this.incrementCurPoll} tokenBalances={this.state.tokenBalances} curAccount={this.state.curAccount} />
         <hr />

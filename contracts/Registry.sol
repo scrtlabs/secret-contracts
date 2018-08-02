@@ -12,9 +12,9 @@ import "./Voting.sol";
 
 contract Registry {
 
-  using SafeMath for uint256;
+  using SafeMath for uint;
 
-  event Application(address owner, string candidate, uint256 stake);
+  event Application(address owner, string candidate, uint stake);
   event newChallenge(address owner, bytes32 listingHash);
   event Whitelisted(bytes32 listingHash);
 
@@ -25,31 +25,31 @@ contract Registry {
   struct Listing {
     address owner;
     string data;
-    uint256 stake;
+    uint stake;
     ListingStatus status;
-    uint256 applyExpire;
-    uint256 challengeID;
+    uint applyExpire;
+    uint challengeID;
   }
 
   struct Challenge {
     address owner;
-    uint256 pollID;
+    uint pollID;
     bytes32 listingHash;
-    uint256 stake;
+    uint stake;
     string data;
     ChallengeStatus status;
   }
 
   // Store state of registry
-  uint256[] public listingIndex;
+  uint[] public listingIndex;
   mapping(bytes32 => Listing) public listings; // keys are the keccak hash of the candidate string
-  mapping(uint256 => Challenge) public challenges;
+  mapping(uint => Challenge) public challenges;
 
   // Simulate the parameterizer for now
-  uint256 public minDeposit = 10;
-  uint256 public dispensationPct = 10;
-  uint256 public voteQuorum = 50;
-  uint256 public applyStageLen = 60; // 60 seconds -> 1 minute apply time
+  uint public minDeposit = 10;
+  uint public dispensationPct = 10;
+  uint public voteQuorum = 50;
+  uint public applyStageLen = 60; // 60 seconds -> 1 minute apply time
 
   // Setup
   VotingToken public token;
@@ -68,14 +68,13 @@ contract Registry {
   /* LISTING RELATED FUNCTIONS */
 
   // NOTE: User needs to approve token transfer beforehand.
-  function apply(uint256 _amount, string _candidate) external returns(bytes32) {
+  function apply(uint _amount, string _candidate) external returns(bytes32) {
     // make sure the applicant has enough stake
     require(_amount >= minDeposit);
     bytes32 listingHash = keccak256(_candidate);
 
     // make sure that there isn't a duplicate application or that the candidate is already on the registry
     require(getListingStatus(listingHash) == ListingStatus.ABSENT);
-
 
     // create a new listing
     listings[listingHash] = Listing({
@@ -109,7 +108,7 @@ contract Registry {
     Listing storage listing = listings[_listingHash];
     require(msg.sender == listing.owner);
 
-    uint256 amount = listing.stake;
+    uint amount = listing.stake;
     delete listings[_listingHash];
 
     require(token.transfer(msg.sender, amount));
@@ -119,14 +118,14 @@ contract Registry {
   /* EVERYTHING UNDER HERE IS VERY UNTESTED */
 
   /* CHALLENGE RELATED FUNCTIONS */
-  function challenge(bytes32 _listingHash, string _data) external returns (uint256) {
+  function challenge(bytes32 _listingHash, string _data) external returns (uint) {
     Listing storage listing = listings[_listingHash];
     require(listing.status != ListingStatus.ABSENT);
     require(listing.challengeID == 0 || getChallengeStatus(listing.challengeID) == ChallengeStatus.REJECTED);
 
     // create new poll
     // NOTE: need to add timed poll later
-    uint256 pollID = voting.createPoll(voteQuorum, _data);
+    uint pollID = voting.createPoll(voteQuorum, _data);
 
     // create new challenge
     challenges[pollID] = Challenge({
@@ -147,14 +146,14 @@ contract Registry {
   }
 
   /* THIS IS TEMPORARY WHILE WE HAVE NO TIMED POLLS */
-  function endChallengePoll(uint256 _pollID) external {
+  function endChallengePoll(uint _pollID) external {
     require(msg.sender == challenges[_pollID].owner);
     voting.endPoll(_pollID);
   }
 
-  function updateChallengeStatus(uint256 _pollID) external {
+  function updateChallengeStatus(uint _pollID) external {
     require(getChallengeStatus(_pollID) == ChallengeStatus.IN_PROGRESS);
-    uint256 pollStatus = uint(voting.getPollStatus(_pollID));
+    uint pollStatus = uint(voting.getPollStatus(_pollID));
     require(pollStatus > 1);  // make sure poll has ended
     if (pollStatus == 2) {
       challenges[_pollID].status = ChallengeStatus.PASSED;
@@ -173,7 +172,7 @@ contract Registry {
     return listings[_listingHash].data;
   }
 
-  function getChallengeStatus(uint256 _challengeID) public returns (ChallengeStatus) {
+  function getChallengeStatus(uint _challengeID) public returns (ChallengeStatus) {
     return challenges[_challengeID].status;
   }
 

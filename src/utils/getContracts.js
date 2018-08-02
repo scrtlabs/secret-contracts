@@ -30,7 +30,7 @@ class EnigmaSetup {
   async init() {
     try {
       // Use ganache on the SGX server for the web3 instance.
-      // console.log("Get web3");
+      console.log("Get web3");
       // const argv = require('minimist') (process.argv.slice(2));
       // const url = argv.url || 'http://localhost:8545';
       // const provider = new Web3.providers.HttpProvider (url);
