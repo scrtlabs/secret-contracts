@@ -13,7 +13,7 @@ contract Voting {
   using SafeMath for uint;
 
   /* EVENTS */
-  event voteCasted(address voter, uint pollID, uint vote, uint weight);
+  event voteCasted(address voter, uint pollID, bytes vote, uint weight);
   event pollCreated(uint pollID, uint quorumPercentage, address creator, string description);
   event pollStatusUpdate(bool status);
 
@@ -35,7 +35,7 @@ contract Voting {
   /* VOTER */
   struct Voter {
     bool hasVoted;
-    uint vote;
+    bytes vote;
     uint weight;
   }
 
@@ -98,9 +98,7 @@ contract Voting {
   /*
    * Checks if a poll was approved given the quorum percentage.
    */
-  function updatePollStatus(uint _pollID, uint _yeaVotes, uint _nayVotes) public validPoll(_pollID)
-    //onlyEnigma()
-    {
+  function updatePollStatus(uint _pollID, uint _yeaVotes, uint _nayVotes) public validPoll(_pollID) onlyEnigma() {
     require(getPollStatus(_pollID) == PollStatus.TALLY, "Poll has not expired yet.");
     Poll storage curPoll = polls[_pollID];
     curPoll.yeaVotes = _yeaVotes;
@@ -143,21 +141,22 @@ contract Voting {
   }
 
   /*
-   * Gets the encrypted votes and weights for a given poll after it has ended.
+   * Gets the encrypted vote and weight for a voter and a given ended poll.
    */
-  function getInfoForPoll(uint _pollID) public validPoll(_pollID) returns (uint[], uint[]) {
+  function getPollInfoForVoter(uint _pollID, address _voter) public view validPoll(_pollID) returns (bytes, uint) {
     require(getPollStatus(_pollID) != PollStatus.IN_PROGRESS);
+    require(userHasVoted(_pollID, _voter));
     Poll storage curPoll = polls[_pollID];
-    uint numVoters = curPoll.voters.length;
-    uint[] memory votes = new uint[](numVoters);
-    uint[] memory weights = new uint[](numVoters);
-    for (uint i = 0; i < numVoters; i++) {
-      address curVoter = curPoll.voters[i];
-      votes[i] = curPoll.voterInfo[curVoter].vote;
-      weights[i] = curPoll.voterInfo[curVoter].weight;
-    }
-    return (votes, weights);
+    bytes vote = curPoll.voterInfo[_voter].vote;
+    uint weight = curPoll.voterInfo[_voter].weight;
+    return (vote, weight);
   }
+
+  function getVotersForPoll(uint _pollID) public view validPoll(_pollID) returns(address[]) {
+    require(getPollStatus(_pollID) != PollStatus.IN_PROGRESS);
+    return polls[_pollID].voters;
+  }
+
 
   /* VOTE OPERATIONS */
 
@@ -165,7 +164,7 @@ contract Voting {
    * Casts a vote for a given poll. Stakes ERC20 tokens as votes.
    * NOTE: _weight is denominated in *wei*.
    */
-  function castVote(uint _pollID, uint _encryptedVote, uint _weight) external validPoll(_pollID) {
+  function castVote(uint _pollID, bytes _encryptedVote, uint _weight) external validPoll(_pollID) {
     require(getPollStatus(_pollID) == PollStatus.IN_PROGRESS, "Poll has expired.");
     require(!userHasVoted(_pollID, msg.sender), "User has already voted.");
     require(getTokenStake(msg.sender) >= _weight, "User does not have enough staked tokens.");
@@ -191,11 +190,13 @@ contract Voting {
   /*
    * The callable function that is computed by the SGX node.
    */
-  function countVotes(uint _pollID, uint[] _votes, uint[] _weights) public pure returns (uint pollID, uint yeaVotes, uint nayVotes) {
+  function countVotes(uint _pollID, uint[] _votes, uint[] _weights) public pure returns (uint, uint, uint) {
     require(_votes.length == _weights.length);
+    uint yeaVotes;
+    uint nayVotes;
     for (uint i = 0; i < _votes.length; i++) {
       if (_votes[i] == 0) nayVotes += _weights[i];
-      else yeaVotes += _weights[i];
+      else if (_votes[i] == 1) yeaVotes += _weights[i];
     }
     return (_pollID, yeaVotes, nayVotes);
   }

@@ -104,6 +104,7 @@ class App extends Component {
         <Poll objects={this.state.contractsObj} update={this.incrementCurPoll} tokenBalances={this.state.tokenBalances} curAccount={this.state.curAccount} />
         <hr />
         <Vote objects={this.state.contractsObj} update={this.changeTokenBalances} tokenBalances={this.state.tokenBalances} curAccount={this.state.curAccount} />
+        <hr />
       </div>
     );
   }

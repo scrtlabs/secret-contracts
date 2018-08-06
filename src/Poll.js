@@ -3,8 +3,8 @@
 import React, { Component } from 'react';
 import './App.css';
 
-const CALLABLE = 'countVotes(uint256,uint256[],uint256[])';
-const CALLBACK = 'updatePollStatus(uint256,uint256,uint256)';
+const CALLABLE = 'countVotes(uint,uint[],uint[])';
+const CALLBACK = 'updatePollStatus(uint,uint,uint)';
 const ENG_FEE = 1;
 const GAS = 4712388;
 
@@ -72,27 +72,37 @@ class Poll extends Component {
    */
   enigmaTask = async(pollID) => {
     let voters;
-    let voterInfo;
-    let encryptedVotes;
-    let weights;
+    let encryptedVotes = [];
+    let weights = [];
     let task;
 
-    // retrieve all the votes and weights for a given poll
-    this.props.objects.Voting.getInfoForPoll.call(parseInt(pollID), {
+    // retrieve voter list
+    voters = await this.props.objects.Voting.getVotersForPoll.call(parseInt(pollID), {
       from: this.props.objects.accounts[this.props.curAccount],
       gas: GAS
     })
-    .then(result => {
-      console.log("Get all of the votes and weights");
-      encryptedVotes = result[0].map(encryptedVote => encryptedVote.toNumber());
-      weights = result[1].map(weight => {
-        return parseInt(this.props.objects.web3.utils.fromWei(String(weight.toNumber()), "Ether"));
-      });
-      return this.props.objects.web3.eth.getBlockNumber();
-    })
+
+    // get votes and weights for each voter
+    for (let i = 0; i < voters.length; i++) {
+      await this.props.objects.Voting.getPollInfoForVoter.call(parseInt(pollID), voters[i], {
+        from: this.props.objects.accounts[this.props.curAccount],
+        gas: GAS
+      })
+      .then(result => {
+        console.log("result " + this.props.objects.web3.utils.toAscii(result[0]));
+        encryptedVotes.push(this.props.objects.web3.utils.toAscii(result[0]));
+        weights.push(parseInt(this.props.objects.web3.utils.fromWei(String(result[1].toNumber()), "Ether")))
+      })
+    }
+
+    return this.props.objects.web3.eth.getBlockNumber()
     .then(blockNumber => {
       console.log("Create task.");
       // create an Enigma task
+
+      console.log(encryptedVotes);
+      console.log(weights);
+
       return this.props.objects.enigma.createTask(
         blockNumber,
         this.props.objects.Voting.address,
@@ -140,7 +150,7 @@ class Poll extends Component {
   getPollStatus(event) {
     if (event) event.preventDefault();
     // get the result
-    this.props.objects.Voting.getPollStatus(parseInt(this.statusPollID.value), {
+    return this.props.objects.Voting.getPollStatus(parseInt(this.statusPollID.value), {
       from: this.props.objects.accounts[this.props.curAccount]
     })
     // parse the output

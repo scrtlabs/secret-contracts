@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import './App.css';
 
-const engUtils = require('../enigma-lib/enigma-utils');  // for simulating principal node
+const engUtils = require('../enigma-lib/enigma-utils');
 const GAS = 4712388;
 
 class Vote extends Component {
@@ -24,8 +24,11 @@ class Vote extends Component {
   vote(event) {
     if (event) event.preventDefault();
 
+    let encryptedVote = this.props.objects.web3.utils.fromAscii(getEncryptedVote(this.curVote.value));
+    console.log("encrypted value " + encryptedVote);
+
     // cast vote
-    this.props.objects.Voting.castVote(parseInt(this.votePollID.value), parseInt(this.curVote.value),
+    this.props.objects.Voting.castVote(parseInt(this.votePollID.value), encryptedVote,
       this.props.objects.web3.utils.toWei(this.curWeight.value, "ether"), {
       from: this.props.objects.accounts[this.props.curAccount],
       gas: GAS
@@ -36,6 +39,7 @@ class Vote extends Component {
       alert('Vote casted!');
     })
     .catch(error => {
+      console.log(error);
       alert("Unable to cast vote. Either you have already voted, the poll has ended, or your parameters are invalid.");
     })
   }
