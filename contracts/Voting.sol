@@ -1,7 +1,5 @@
-// Voting.sol, Andrew Tam
-// TODO:
-//  -Separate token staking from voting
-//  -Timed polls
+// Voting.sol
+// Author: Andrew Tam, 2018
 
 pragma solidity ^0.4.24;
 
@@ -14,7 +12,7 @@ contract Voting {
 
   /* EVENTS */
   event voteCasted(address voter, uint pollID, bytes vote, uint weight);
-  event pollCreated(uint pollID, uint quorumPercentage, address creator, string description);
+  event pollCreated(address creator, uint pollID, uint quorumPercentage, string description, uint votingLength);
   event pollStatusUpdate(bool status);
 
   /* Determine the current state of a poll */
@@ -29,6 +27,7 @@ contract Voting {
     uint nayVotes;
     string description;
     address[] voters;
+    uint expirationTime;
     mapping(address => Voter) voterInfo;
   }
 
@@ -39,12 +38,14 @@ contract Voting {
     uint weight;
   }
 
+  /* TOKEN MANAGER */
   struct TokenManager {
     uint tokenBalance;
     mapping(uint => uint) lockedTokens;
     uint[] participatedPolls;
   }
 
+  /* STATE VARIABLES */
   mapping(uint => Poll) public polls;
   mapping(address => TokenManager) public bank;
   uint public pollCount;
@@ -64,7 +65,7 @@ contract Voting {
   /*
    * Creates a new poll with a specified quorum percentage. Returns the poll ID of the new poll.
    */
-  function createPoll(uint _quorumPct, string _description) external returns(uint) {
+  function createPoll(uint _quorumPct, string _description, uint _voteLength) external returns (uint) {
     require(_quorumPct <= 100, "Quorum Percentage must be less than or equal to 100%");
     pollCount++;
 
@@ -72,9 +73,10 @@ contract Voting {
     curPoll.creator = msg.sender;
     curPoll.status = PollStatus.IN_PROGRESS;
     curPoll.quorumPercentage = _quorumPct;
+    curPoll.expirationTime = now + _voteLength * 1 seconds;
     curPoll.description = _description;
 
-    emit pollCreated(pollCount, _quorumPct, msg.sender, _description);
+    emit pollCreated(msg.sender, pollCount, _quorumPct, _description, _voteLength);
     return pollCount;
   }
 
@@ -84,19 +86,13 @@ contract Voting {
   function endPoll(uint _pollID) public validPoll(_pollID) {
     require(msg.sender == polls[_pollID].creator, "User is not the creator of the poll.");
     require(polls[_pollID].status == PollStatus.IN_PROGRESS, "Vote is not in progress.");
+    require(now >= getPollExpirationTime(_pollID), "Voting period has not expired");
     polls[_pollID].status = PollStatus.TALLY;
   }
 
   /*
-   * Modifier that checks for a valid poll ID.
-   */
-  modifier validPoll(uint _pollID) {
-    require(_pollID > 0 && _pollID <= pollCount, "Not a valid poll Id.");
-    _;
-  }
-
-  /*
-   * Checks if a poll was approved given the quorum percentage.
+   * The callback function. Checks if a poll was passed given the quorum percentage and vote distribution.
+   * NOTE: Only the Enigma contract can call this function.
    */
   function updatePollStatus(uint _pollID, uint _yeaVotes, uint _nayVotes) public validPoll(_pollID) onlyEnigma() {
     require(getPollStatus(_pollID) == PollStatus.TALLY, "Poll has not expired yet.");
@@ -117,14 +113,6 @@ contract Voting {
     emit pollStatusUpdate(pollStatus);
   }
 
-  function updateTokenBank(uint _pollID) internal {
-    Poll memory curPoll = polls[_pollID];
-    for (uint i = 0; i < curPoll.voters.length; i++) {
-      address voter = curPoll.voters[i];
-      bank[voter].lockedTokens[_pollID] = 0;
-    }
-  }
-
   /*
    * Gets the status of a poll.
    */
@@ -133,15 +121,21 @@ contract Voting {
   }
 
   /*
-   * Modifier that checks that the contract caller is the Enigma contract.
+   * Gets the expiration date of a poll.
    */
-  modifier onlyEnigma() {
-    require(msg.sender == address(enigma));
-    _;
+  function getPollExpirationTime(uint _pollID) public view validPoll(_pollID) returns (uint) {
+    return poll[_pollID].expirationTime;
   }
 
   /*
-   * Gets the encrypted vote and weight for a voter and a given ended poll.
+   * Gets the complete list of polls a user has voted in.
+   */
+  function getPollHistory(address _voter) public view returns(uint[]) {
+    return bank[_voter].participatedPolls;
+  }
+
+  /*
+   * Gets a voter's encrypted vote and weight for a given expired poll.
    */
   function getPollInfoForVoter(uint _pollID, address _voter) public view validPoll(_pollID) returns (bytes, uint) {
     require(getPollStatus(_pollID) != PollStatus.IN_PROGRESS);
@@ -152,16 +146,46 @@ contract Voting {
     return (vote, weight);
   }
 
+  /*
+   * Gets all the voters of a poll.
+   */
   function getVotersForPoll(uint _pollID) public view validPoll(_pollID) returns(address[]) {
     require(getPollStatus(_pollID) != PollStatus.IN_PROGRESS);
     return polls[_pollID].voters;
   }
 
+  /*
+   * Modifier that checks for a valid poll ID.
+   */
+  modifier validPoll(uint _pollID) {
+    require(_pollID > 0 && _pollID <= pollCount, "Not a valid poll Id.");
+    _;
+  }
+
+  /*
+   * Modifier that checks that the contract caller is the Enigma contract.
+   */
+  modifier onlyEnigma() {
+    require(msg.sender == address(enigma));
+    _;
+  }
 
   /* VOTE OPERATIONS */
 
   /*
-   * Casts a vote for a given poll. Stakes ERC20 tokens as votes.
+   * Stakes tokens for a given voter in return for voting credits.
+   * NOTE:
+   *  User must approve transfer of tokens.
+   *  _numTokens is denominated in *wei*.
+   */
+  function stakeVotingTokens(uint _numTokens) external {
+    require(token.balanceOf(msg.sender) >= _numTokens, "User does not have enough tokens");
+    require(token.transferFrom(msg.sender, this, _numTokens), "User did not approve token transfer.");
+    bank[msg.sender].tokenBalance += _numTokens;
+  }
+
+  /*
+   * Casts a vote for a given poll.
    * NOTE: _weight is denominated in *wei*.
    */
   function castVote(uint _pollID, bytes _encryptedVote, uint _weight) external validPoll(_pollID) {
@@ -186,9 +210,8 @@ contract Voting {
     emit voteCasted(msg.sender, _pollID, _encryptedVote, _weight);
   }
 
-
   /*
-   * The callable function that is computed by the SGX node.
+   * The callable function that is computed by the SGX node. Tallies votes.
    */
   function countVotes(uint _pollID, uint[] _votes, uint[] _weights) public pure returns (uint, uint, uint) {
     require(_votes.length == _weights.length);
@@ -207,19 +230,8 @@ contract Voting {
   function userHasVoted(uint _pollID, address _user) public view validPoll(_pollID) returns (bool) {
     return (polls[_pollID].voterInfo[_user].hasVoted);
   }
-  /* TOKEN OPERATIONS */
 
-  /*
-   * Stakes tokens for a given voter.
-   * NOTE:
-   *  User must approve transfer of tokens.
-   *  _numTokens is denominated in *wei*.
-   */
-  function stakeVotingTokens(uint _numTokens) external {
-    require(token.balanceOf(msg.sender) >= _numTokens, "User does not have enough tokens");
-    require(token.transferFrom(msg.sender, this, _numTokens), "User did not approve token transfer.");
-    bank[msg.sender].tokenBalance += _numTokens;
-  }
+  /* TOKEN OPERATIONS */
 
   /*
    * Allows a voter to withdraw voting tokens after a poll has ended.
@@ -233,6 +245,9 @@ contract Voting {
     return _numTokens;
   }
 
+  /*
+   * Gets the amount of Voting Tokens that are locked for a given voter.
+   */
   function getLockedAmount(address _voter) public view returns (uint) {
     TokenManager storage manager = bank[_voter];
     uint largest;
@@ -243,12 +258,22 @@ contract Voting {
     return largest;
   }
 
+  /*
+   * Gets the amount of Voting Credits for a given voter.
+   */
   function getTokenStake(address _voter) public view returns(uint) {
     return bank[_voter].tokenBalance;
   }
 
-  function getPollHistory(address _voter) public view returns(uint[]) {
-    return bank[_voter].participatedPolls;
+  /*
+   * Helper function that updates active token balances after a poll has ended.
+   */
+  function updateTokenBank(uint _pollID) internal {
+    Poll memory curPoll = polls[_pollID];
+    for (uint i = 0; i < curPoll.voters.length; i++) {
+      address voter = curPoll.voters[i];
+      bank[voter].lockedTokens[_pollID] = 0;
+    }
   }
 
 

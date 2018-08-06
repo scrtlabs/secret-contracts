@@ -21,6 +21,7 @@ class Poll extends Component {
     this.curPollDescription;
     this.endPollID;
     this.statusPollID;
+    this.votingPeriod
   }
 
   /*
@@ -29,7 +30,8 @@ class Poll extends Component {
   newPoll(event) {
     if (event) event.preventDefault();
     // create a new poll
-    this.props.objects.Voting.createPoll(parseInt(this.curQuorumPct.value), String(this.curPollDescription.value), {
+    this.props.objects.Voting.createPoll(parseInt(this.curQuorumPct.value), String(this.curPollDescription.value),
+      parseInt(this.votingPeriod.value), {
       from: this.props.objects.accounts[this.props.curAccount],
       gas: GAS
     })
@@ -62,7 +64,7 @@ class Poll extends Component {
     })
     .catch(error => {
       console.log(error);
-      alert("Unable to end poll. You must be the creator of the original poll.");
+      alert("Unable to end poll. Either the voting period has not expired or you are not the creator of the original poll.");
     })
 
   }
@@ -89,7 +91,6 @@ class Poll extends Component {
         gas: GAS
       })
       .then(result => {
-        console.log("result " + this.props.objects.web3.utils.toAscii(result[0]));
         encryptedVotes.push(this.props.objects.web3.utils.toAscii(result[0]));
         weights.push(parseInt(this.props.objects.web3.utils.fromWei(String(result[1].toNumber()), "Ether")))
       })
@@ -182,8 +183,10 @@ class Poll extends Component {
         <form onSubmit={this.newPoll} id="new_form">
           <label> Create a new poll with quorum percentage </label>
           <input type="text" ref={(element) => { this.curQuorumPct = element }} />
-          <label> and poll description: </label>
+          <label> poll description </label>
           <input type="text" ref={(element) => { this.curPollDescription = element }} />
+          <label> and voting period: (enter number of seconds): </label>
+          <input type="text" ref={(element) => { this.votingPeriod = element }} />
           <button> New Poll </button>
         </form>
         <br />

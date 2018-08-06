@@ -124,8 +124,7 @@ contract Registry {
     require(listing.challengeID == 0 || getChallengeStatus(listing.challengeID) == ChallengeStatus.REJECTED);
 
     // create new poll
-    // NOTE: need to add timed poll later
-    uint pollID = voting.createPoll(voteQuorum, _data);
+    uint pollID = voting.createPoll(voteQuorum, _data, applyStageLen);
 
     // create new challenge
     challenges[pollID] = Challenge({
@@ -145,7 +144,6 @@ contract Registry {
     return pollID;
   }
 
-  /* THIS IS TEMPORARY WHILE WE HAVE NO TIMED POLLS */
   function endChallengePoll(uint _pollID) external {
     require(msg.sender == challenges[_pollID].owner);
     voting.endPoll(_pollID);
