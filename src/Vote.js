@@ -24,7 +24,8 @@ class Vote extends Component {
   vote(event) {
     if (event) event.preventDefault();
 
-    let encryptedVote = this.props.objects.web3.utils.fromAscii(getEncryptedVote(this.curVote.value));
+    let encryptedVote = getEncryptedVote(this.curVote.value);
+    console.log("vote " + encryptedVote);
 
     // cast vote
     this.props.objects.Voting.castVote(parseInt(this.votePollID.value), encryptedVote,

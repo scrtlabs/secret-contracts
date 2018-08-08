@@ -91,6 +91,7 @@ class Poll extends Component {
         gas: GAS
       })
       .then(result => {
+        console.log(this.props.objects.web3.utils.toAscii(result[0]));
         encryptedVotes.push(this.props.objects.web3.utils.toAscii(result[0]));
         weights.push(parseInt(this.props.objects.web3.utils.fromWei(String(result[1].toNumber()), "Ether")))
       })
@@ -100,10 +101,6 @@ class Poll extends Component {
     .then(blockNumber => {
       console.log("Create task.");
       // create an Enigma task
-
-      console.log(encryptedVotes);
-      console.log(weights);
-
       return this.props.objects.enigma.createTask(
         blockNumber,
         this.props.objects.Voting.address,

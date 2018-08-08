@@ -13,14 +13,15 @@
       This dApp utilizes the Enigma Protocol Testnet to implement secret voting. The steps are as follows: <br />
       <ol>
         <li> Select an account. The default account is the first account (account 0) but you have the option of changing to a different account except for account number 9. </li>
-        <li> Buy Voting Tokens. The current exchange rate is 1 Ether for 10 Voting Tokens. The dApp will automatically approve the Voting Token transfer for you as well. </li>
+        <li> Buy Voting Tokens. The current exchange rate is 1 Ether for 10 Voting Tokens.  </li>
+        <li> Stake voting tokens in the contract. The dApp will automatically approve the Voting Token transfer for you as well.
         <li> Create a poll. Each poll is associated with a poll ID. There will be a label in the dashboard showing the poll ID of the current poll. </li>
-        <li> Vote in the poll. In the current implementation, voting tokens are locked up by the contract until the end of the poll. </li>
-        <li>End the poll. Note that only the creator of a poll can end that poll. We implemented it this way the simplify the testing process. <br />
+        <li> Vote in the poll. In the current implementation, a user can only vote once and cannot change vote/weights during the poll. </li>
+        <li> End the poll. After the poll period has expired, only the creator of a poll can end that poll. <br />
             a. Once the poll has ended, a selected SGX node on the Enigma Network will privately tally the votes and update the result of the poll. </li>
         <li> Check the poll result. All poll metrics are public including the final status of the poll and the number of "yes"and "no" votes casted.
             However, due to secret voting, there is no way to match voters with their vote choice.</li>
-        <li> Withdraw your tokens. You can withdraw tokens that were locked up in a poll only after the poll has ended. </li>
+        <li> Withdraw your tokens. You can only withdraw tokens that are not being used in other active polls. </li>
       </ol>
   </p>
   </div>

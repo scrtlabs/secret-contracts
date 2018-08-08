@@ -124,7 +124,7 @@ contract Voting {
    * Gets the expiration date of a poll.
    */
   function getPollExpirationTime(uint _pollID) public view validPoll(_pollID) returns (uint) {
-    return poll[_pollID].expirationTime;
+    return polls[_pollID].expirationTime;
   }
 
   /*
@@ -173,24 +173,13 @@ contract Voting {
   /* VOTE OPERATIONS */
 
   /*
-   * Stakes tokens for a given voter in return for voting credits.
-   * NOTE:
-   *  User must approve transfer of tokens.
-   *  _numTokens is denominated in *wei*.
-   */
-  function stakeVotingTokens(uint _numTokens) external {
-    require(token.balanceOf(msg.sender) >= _numTokens, "User does not have enough tokens");
-    require(token.transferFrom(msg.sender, this, _numTokens), "User did not approve token transfer.");
-    bank[msg.sender].tokenBalance += _numTokens;
-  }
-
-  /*
    * Casts a vote for a given poll.
    * NOTE: _weight is denominated in *wei*.
    */
   function castVote(uint _pollID, bytes _encryptedVote, uint _weight) external validPoll(_pollID) {
     require(getPollStatus(_pollID) == PollStatus.IN_PROGRESS, "Poll has expired.");
     require(!userHasVoted(_pollID, msg.sender), "User has already voted.");
+    //require(getPollExpirationTime(_pollID) > now);
     require(getTokenStake(msg.sender) >= _weight, "User does not have enough staked tokens.");
 
     // update token bank
@@ -234,6 +223,18 @@ contract Voting {
   /* TOKEN OPERATIONS */
 
   /*
+   * Stakes tokens for a given voter in return for voting credits.
+   * NOTE:
+   *  User must approve transfer of tokens.
+   *  _numTokens is denominated in *wei*.
+   */
+  function stakeVotingTokens(uint _numTokens) external {
+    require(token.balanceOf(msg.sender) >= _numTokens, "User does not have enough tokens");
+    require(token.transferFrom(msg.sender, this, _numTokens), "User did not approve token transfer.");
+    bank[msg.sender].tokenBalance += _numTokens;
+  }
+
+  /*
    * Allows a voter to withdraw voting tokens after a poll has ended.
    * NOTE: _numTokens is denominated in *wei*.
    */
@@ -275,6 +276,5 @@ contract Voting {
       bank[voter].lockedTokens[_pollID] = 0;
     }
   }
-
 
 }
