@@ -24,7 +24,7 @@ class Vote extends Component {
   vote(event) {
     if (event) event.preventDefault();
 
-    let encryptedVote = getEncryptedVote(this.curVote.value);
+    let encryptedVote = getEncryptedVote(parseInt(this.curVote.value));
     console.log("vote " + encryptedVote);
 
     // cast vote

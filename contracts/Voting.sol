@@ -83,7 +83,7 @@ contract Voting {
   /*
    * Ends a poll. Only the creator of a given poll can end that poll.
    */
-  function endPoll(uint _pollID) public validPoll(_pollID) {
+  function endPoll(uint _pollID) external validPoll(_pollID) {
     require(msg.sender == polls[_pollID].creator, "User is not the creator of the poll.");
     require(polls[_pollID].status == PollStatus.IN_PROGRESS, "Vote is not in progress.");
     require(now >= getPollExpirationTime(_pollID), "Voting period has not expired");
