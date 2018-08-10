@@ -1,5 +1,5 @@
 // Auction.sol, Andrew Tam
-// What happens when there is a tie?
+// Need to add claimReward function
 
 pragma solidity ^0.4.24;
 
@@ -19,12 +19,12 @@ contract Auction {
   uint public endTime;
   address public winner;
   mapping(address => Bidder) public bidders;
-  address[] public bidderList;
+  address[] public bidderAddresses;
   Enigma public enigma;
   AuctionState public state;
 
   event Bid(address bidder);
-  event Winner(address winner);
+  event Winner(address winner, uint bidValue);
 
   constructor(address _owner, uint _auctionLength, address _enigma) public {
     owner = _owner;
@@ -45,7 +45,7 @@ contract Auction {
   function endAuction() external {
     require(msg.sender == owner);
     require(state == AuctionState.IN_PROGRESS);
-    require(now >= endTime);
+    //require(now >= endTime);
     state = AuctionState.CALCULATING;
   }
 
@@ -69,7 +69,7 @@ contract Auction {
     {
     winner = _highestBidder;
     state = AuctionState.COMPLETED;
-    emit Winner(winner);
+    emit Winner(_highestBidder, _highestBidAmount);
   }
 
   /*
@@ -85,7 +85,7 @@ contract Auction {
   }
 
   function getAllBidders() public view returns (address[]) {
-    return bidderList;
+    return bidderAddresses;
   }
 
   function getExpirationTime() public view returns (uint) {

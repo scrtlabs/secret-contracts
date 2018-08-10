@@ -16,7 +16,7 @@ contract AuctionFactory {
     enigmaAddress = _enigmaAddress;
   }
 
-  function createAuction(uint _auctionLength) external {
+  function createAuction(uint _auctionLength) external returns (address) {
     Auction auction = new Auction(msg.sender, _auctionLength, enigmaAddress);
     auctions.push(auction);
     emit newAuction(auction);

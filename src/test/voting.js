@@ -3,21 +3,21 @@
 // Highly modeled after: https://github.com/enigmampc/enigma-contract/blob/develop/integration/coin-mixer.js
 
 // Import Enigma libraries
-const testUtils = require ('../enigma-lib/test-utils'); // for predicting gas prices
+const testUtils = require ('../../enigma-lib/test-utils'); // for predicting gas prices
 const web3Utils = require ('web3-utils');  // needed for converting to Wei amounts
-const engUtils = require('../enigma-lib/enigma-utils');  // for simulating principal node
-const eng = require('../enigma-lib/Enigma');  // used to create worker tasks
+const engUtils = require('../../enigma-lib/enigma-utils');  // for simulating principal node
+const eng = require('../../enigma-lib/Enigma');  // used to create worker tasks
 
 // Import web3 related libraries
 const Web3 = require('web3');
 const contract = require('truffle-contract');
 
 // Import contract objects (use truffle-contract objects)
-const Enigma = contract(require('../build/contracts/Enigma.json'));
-const EnigmaToken = contract(require('../build/contracts/EnigmaToken.json'));
-const Voting = contract(require('../build/contracts/Voting.json'));
-const TokenFactory = contract(require('../build/contracts/TokenFactory.json'));
-const VotingToken = contract(require('../build/contracts/VotingToken.json'));
+const Enigma = contract(require('../../build/contracts/Enigma.json'));
+const EnigmaToken = contract(require('../../build/contracts/EnigmaToken.json'));
+const Voting = contract(require('../../build/contracts/Voting.json'));
+const TokenFactory = contract(require('../../build/contracts/TokenFactory.json'));
+const VotingToken = contract(require('../../build/contracts/VotingToken.json'));
 
 Enigma.setNetwork(1);
 
