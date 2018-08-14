@@ -22,9 +22,10 @@ class Vote extends Component {
    * TODO: Add encryption
    */
   vote(event) {
+    var BN = this.props.objects.web3.utils.BN;
     if (event) event.preventDefault();
 
-    let encryptedVote = getEncryptedVote(parseInt(this.curVote.value));
+    let encryptedVote = getEncryptedVote(new BN(this.curVote.value));
     console.log("vote " + encryptedVote);
 
     // cast vote

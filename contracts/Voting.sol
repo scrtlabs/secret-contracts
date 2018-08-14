@@ -63,10 +63,11 @@ contract Voting {
   /* POLL OPERATIONS */
 
   /*
-   * Creates a new poll with a specified quorum percentage. Returns the poll ID of the new poll.
+   * Creates a new poll with a specified quorum percentage.
    */
-  function createPoll(uint _quorumPct, string _description, uint _voteLength) external returns (uint) {
+  function createPoll(uint _quorumPct, string _description, uint _voteLength) external returns (uint){
     require(_quorumPct <= 100, "Quorum Percentage must be less than or equal to 100%");
+    require(_voteLength > 0, "The voting period cannot be 0.");
     pollCount++;
 
     Poll storage curPoll = polls[pollCount];
@@ -149,7 +150,7 @@ contract Voting {
   /*
    * Gets all the voters of a poll.
    */
-  function getVotersForPoll(uint _pollID) public view validPoll(_pollID) returns(address[]) {
+  function getVotersForPoll(uint _pollID) public view validPoll(_pollID) returns (address[]) {
     require(getPollStatus(_pollID) != PollStatus.IN_PROGRESS);
     return polls[_pollID].voters;
   }
@@ -238,12 +239,11 @@ contract Voting {
    * Allows a voter to withdraw voting tokens after a poll has ended.
    * NOTE: _numTokens is denominated in *wei*.
    */
-  function withdrawTokens(uint _numTokens) external returns(uint) {
+  function withdrawTokens(uint _numTokens) external {
     uint largest = getLockedAmount(msg.sender);
     require(getTokenStake(msg.sender) - largest >= _numTokens, "User is trying to withdraw too many tokens.");
     bank[msg.sender].tokenBalance -= _numTokens;
     require(token.transfer(msg.sender, _numTokens));
-    return _numTokens;
   }
 
   /*

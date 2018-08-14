@@ -205,4 +205,5 @@ class Poll extends Component {
   }
 }
 
+
 export default Poll;

@@ -2,6 +2,7 @@ const web3Utils = require ('web3-utils');
 const RLP = require ('rlp');
 const forge = require ('node-forge'); //TODO: account for browser
 const pki = forge.pki;
+const BN = require('bn.js');
 const EthCrypto = require ('eth-crypto');
 const EC = require ('elliptic').ec;
 const Buffer = require ('buffer/').Buffer; // The node buffer in the browser
@@ -245,7 +246,6 @@ function getDerivedKey (enclavePublicKey, clientPrivateKey) {
     if (enclavePublicKey.slice (0, 2) != '04') {
         enclavePublicKey = '04' + enclavePublicKey;
     }
-    console.log (enclavePublicKey)
     let client_key = ec.keyFromPrivate (clientPrivateKey, 'hex');
     let enclave_key = ec.keyFromPublic (enclavePublicKey, 'hex');
 
@@ -287,20 +287,42 @@ function decryptMessage (key_hex, msg) {
 
 /**
  * Encrypts a message using the provided key.
+ * Supports: String, Numbers, BN.JS objects.
  * Returns an encrypted message in this format:
  * encrypted_message[*]tag[16]iv[12] (represented as: var_name[len])
  *
+ * If you pass numbers, it's best to pass them as BN.js.
  * @param {string} key_hex
  * @param {string} msg
  * @param {string} iv
  * @returns {string}
  */
 function encryptMessage (key_hex, msg, iv = forge.random.getBytesSync (12)) {
+     // TODO: Add support for bn.js
+     let msg_buf;
+     switch (typeof msg) {
+       case 'string':
+         msg_buf = forge.util.createBuffer (msg);
+         break;
+       case 'number':
+         // Consider optimizing the bit size (putInt32/16/8)
+         // or remove number support entirely in favor of BN.js
+         msg_buf = forge.util.createBuffer();
+         msg_buf.putInt32(msg);
+         break;
+       case 'object':
+         if ( BN.isBN(msg) ) {
+           msg_buf = forge.util.createBuffer(msg.toBuffer().toString('binary'));
+         }
+         break;
+       default:
+         throw new Error("The message is not a string or a number");
+     }
     let key = forge.util.hexToBytes (key_hex);
     const cipher = forge.cipher.createCipher ('AES-GCM', key);
 
     cipher.start ({ iv: iv });
-    cipher.update (forge.util.createBuffer (msg));
+    cipher.update ( msg_buf );
     cipher.finish ();
 
     let result = cipher.output.putBuffer (cipher.mode.tag).putBytes (iv);

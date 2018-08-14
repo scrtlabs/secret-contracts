@@ -23,19 +23,19 @@ module.exports = function(deployer) {
     .then(() => {
       return deployer.deploy(AuctionFactory, Enigma.address);
     })
-    // .then(() => {
-    //   return deployer.deploy(VotingToken);
-    // })
-    // .then(() => {
-    //   return deployer.deploy(TokenFactory, VotingToken.address);
-    // })
-    // .then(() => {
-    //   return deployer.deploy(Voting, VotingToken.address, Enigma.address);
-    // })
-    // .then(() => {
-    //   return VotingToken.deployed().then(instance => instance.transferOwnership(TokenFactory.address))
-    // })
-    // .then(() => {
-    //   return deployer.deploy(Registry, VotingToken.address, Voting.address, "Enigma Registry");
-    // })
+    .then(() => {
+      return deployer.deploy(VotingToken);
+    })
+    .then(() => {
+      return deployer.deploy(TokenFactory, VotingToken.address);
+    })
+    .then(() => {
+      return deployer.deploy(Voting, VotingToken.address, Enigma.address);
+    })
+    .then(() => {
+      return VotingToken.deployed().then(instance => instance.transferOwnership(TokenFactory.address))
+    })
+    .then(() => {
+      return deployer.deploy(Registry, VotingToken.address, Voting.address, "Enigma Registry");
+    })
 };
