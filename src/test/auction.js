@@ -75,7 +75,7 @@ async function testAuction() {
       auctionContract = Auction.at(auctionAddress);
 
       encryptedBids.push(10);
-      addresses.push(String(auctionAccounts[0]));
+      addresses.push(auctionAccounts[0]);
 
       console.log("Bid from account 0");
       return auctionContract.bid(10, {
@@ -85,7 +85,7 @@ async function testAuction() {
     .then(result => {
 
       encryptedBids.push(20);
-      addresses.push(String(auctionAccounts[1]));
+      addresses.push(auctionAccounts[1]);
 
       console.log("Bid from account 1");
       return auctionContract.bid(20, {

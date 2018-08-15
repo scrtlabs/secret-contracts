@@ -413,14 +413,14 @@
     "absolutePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/VotingToken.sol",
     "exportedSymbols": {
       "VotingToken": [
-        3564
+        3217
       ]
     },
-    "id": 3565,
+    "id": 3218,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 3551,
+        "id": 3204,
         "literals": [
           "solidity",
           "^",
@@ -433,10 +433,10 @@
       {
         "absolutePath": "openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol",
         "file": "openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol",
-        "id": 3552,
+        "id": 3205,
         "nodeType": "ImportDirective",
-        "scope": 3565,
-        "sourceUnit": 4112,
+        "scope": 3218,
+        "sourceUnit": 3765,
         "src": "172:71:9",
         "symbolAliases": [],
         "unitAlias": ""
@@ -447,51 +447,51 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 3553,
+              "id": 3206,
               "name": "MintableToken",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 4111,
+              "referencedDeclaration": 3764,
               "src": "318:13:9",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_MintableToken_$4111",
+                "typeIdentifier": "t_contract$_MintableToken_$3764",
                 "typeString": "contract MintableToken"
               }
             },
-            "id": 3554,
+            "id": 3207,
             "nodeType": "InheritanceSpecifier",
             "src": "318:13:9"
           }
         ],
         "contractDependencies": [
-          3834,
-          3930,
-          3973,
-          4005,
-          4111,
-          4358
+          3487,
+          3583,
+          3626,
+          3658,
+          3764,
+          4011
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 3564,
+        "id": 3217,
         "linearizedBaseContracts": [
-          3564,
-          4111,
-          3834,
-          4358,
-          3930,
-          3973,
-          4005
+          3217,
+          3764,
+          3487,
+          4011,
+          3583,
+          3626,
+          3658
         ],
         "name": "VotingToken",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "constant": false,
-            "id": 3557,
+            "id": 3210,
             "name": "name",
             "nodeType": "VariableDeclaration",
-            "scope": 3564,
+            "scope": 3217,
             "src": "336:35:9",
             "stateVariable": true,
             "storageLocation": "default",
@@ -500,7 +500,7 @@
               "typeString": "string"
             },
             "typeName": {
-              "id": 3555,
+              "id": 3208,
               "name": "string",
               "nodeType": "ElementaryTypeName",
               "src": "336:6:9",
@@ -512,7 +512,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "566f74696e6720546f6b656e",
-              "id": 3556,
+              "id": 3209,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -531,10 +531,10 @@
           },
           {
             "constant": false,
-            "id": 3560,
+            "id": 3213,
             "name": "symbol",
             "nodeType": "VariableDeclaration",
-            "scope": 3564,
+            "scope": 3217,
             "src": "375:29:9",
             "stateVariable": true,
             "storageLocation": "default",
@@ -543,7 +543,7 @@
               "typeString": "string"
             },
             "typeName": {
-              "id": 3558,
+              "id": 3211,
               "name": "string",
               "nodeType": "ElementaryTypeName",
               "src": "375:6:9",
@@ -555,7 +555,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "564f5445",
-              "id": 3559,
+              "id": 3212,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -574,10 +574,10 @@
           },
           {
             "constant": false,
-            "id": 3563,
+            "id": 3216,
             "name": "decimals",
             "nodeType": "VariableDeclaration",
-            "scope": 3564,
+            "scope": 3217,
             "src": "408:28:9",
             "stateVariable": true,
             "storageLocation": "default",
@@ -586,7 +586,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 3561,
+              "id": 3214,
               "name": "uint256",
               "nodeType": "ElementaryTypeName",
               "src": "408:7:9",
@@ -598,7 +598,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3138",
-              "id": 3562,
+              "id": 3215,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -616,7 +616,7 @@
             "visibility": "public"
           }
         ],
-        "scope": 3565,
+        "scope": 3218,
         "src": "294:145:9"
       }
     ],
@@ -626,14 +626,14 @@
     "absolutePath": "/Users/andrew/Desktop/Andrew/secret-contracts/secret-contracts/contracts/VotingToken.sol",
     "exportedSymbols": {
       "VotingToken": [
-        3564
+        3217
       ]
     },
-    "id": 3565,
+    "id": 3218,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 3551,
+        "id": 3204,
         "literals": [
           "solidity",
           "^",
@@ -646,10 +646,10 @@
       {
         "absolutePath": "openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol",
         "file": "openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol",
-        "id": 3552,
+        "id": 3205,
         "nodeType": "ImportDirective",
-        "scope": 3565,
-        "sourceUnit": 4112,
+        "scope": 3218,
+        "sourceUnit": 3765,
         "src": "172:71:9",
         "symbolAliases": [],
         "unitAlias": ""
@@ -660,51 +660,51 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 3553,
+              "id": 3206,
               "name": "MintableToken",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 4111,
+              "referencedDeclaration": 3764,
               "src": "318:13:9",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_MintableToken_$4111",
+                "typeIdentifier": "t_contract$_MintableToken_$3764",
                 "typeString": "contract MintableToken"
               }
             },
-            "id": 3554,
+            "id": 3207,
             "nodeType": "InheritanceSpecifier",
             "src": "318:13:9"
           }
         ],
         "contractDependencies": [
-          3834,
-          3930,
-          3973,
-          4005,
-          4111,
-          4358
+          3487,
+          3583,
+          3626,
+          3658,
+          3764,
+          4011
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 3564,
+        "id": 3217,
         "linearizedBaseContracts": [
-          3564,
-          4111,
-          3834,
-          4358,
-          3930,
-          3973,
-          4005
+          3217,
+          3764,
+          3487,
+          4011,
+          3583,
+          3626,
+          3658
         ],
         "name": "VotingToken",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "constant": false,
-            "id": 3557,
+            "id": 3210,
             "name": "name",
             "nodeType": "VariableDeclaration",
-            "scope": 3564,
+            "scope": 3217,
             "src": "336:35:9",
             "stateVariable": true,
             "storageLocation": "default",
@@ -713,7 +713,7 @@
               "typeString": "string"
             },
             "typeName": {
-              "id": 3555,
+              "id": 3208,
               "name": "string",
               "nodeType": "ElementaryTypeName",
               "src": "336:6:9",
@@ -725,7 +725,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "566f74696e6720546f6b656e",
-              "id": 3556,
+              "id": 3209,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -744,10 +744,10 @@
           },
           {
             "constant": false,
-            "id": 3560,
+            "id": 3213,
             "name": "symbol",
             "nodeType": "VariableDeclaration",
-            "scope": 3564,
+            "scope": 3217,
             "src": "375:29:9",
             "stateVariable": true,
             "storageLocation": "default",
@@ -756,7 +756,7 @@
               "typeString": "string"
             },
             "typeName": {
-              "id": 3558,
+              "id": 3211,
               "name": "string",
               "nodeType": "ElementaryTypeName",
               "src": "375:6:9",
@@ -768,7 +768,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "564f5445",
-              "id": 3559,
+              "id": 3212,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -787,10 +787,10 @@
           },
           {
             "constant": false,
-            "id": 3563,
+            "id": 3216,
             "name": "decimals",
             "nodeType": "VariableDeclaration",
-            "scope": 3564,
+            "scope": 3217,
             "src": "408:28:9",
             "stateVariable": true,
             "storageLocation": "default",
@@ -799,7 +799,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 3561,
+              "id": 3214,
               "name": "uint256",
               "nodeType": "ElementaryTypeName",
               "src": "408:7:9",
@@ -811,7 +811,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3138",
-              "id": 3562,
+              "id": 3215,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -829,7 +829,7 @@
             "visibility": "public"
           }
         ],
-        "scope": 3565,
+        "scope": 3218,
         "src": "294:145:9"
       }
     ],
@@ -840,7 +840,7 @@
     "version": "0.4.24+commit.e67f0147.Emscripten.clang"
   },
   "networks": {
-    "1534268032887": {
+    "5777": {
       "events": {
         "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885": {
           "anonymous": false,
@@ -940,10 +940,113 @@
         }
       },
       "links": {},
-      "address": "0xd94b9458ebf8517f8ce7021dd875c414958f60da",
-      "transactionHash": "0x95ec6ff789e3ff6f79d14ece262692502b1caa880fc9f9dde74a1985be84c1a2"
+      "address": "0x9fbda871d559710256a2502a2517b794b482db40",
+      "transactionHash": "0xdab85d85a98d2f218d910f34679d34781d78da28d9088c30ec85189d436fc3d8"
+    },
+    "1534353819892": {
+      "events": {
+        "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Mint",
+          "type": "event"
+        },
+        "0xae5184fba832cb2b1f702aca6117b8d265eaf03ad33eb133f19dde0f5920fa08": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "MintFinished",
+          "type": "event"
+        },
+        "0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipRenounced",
+          "type": "event"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x53d19814941638da5cecc890dc8abb118e510009",
+      "transactionHash": "0x17acbc375deaf789460b17e237cadf102abc37bb0d78074c438d4c01c7245fc2"
     }
   },
   "schemaVersion": "2.0.1",
-  "updatedAt": "2018-08-14T19:10:28.105Z"
+  "updatedAt": "2018-08-15T21:02:56.472Z"
 }
