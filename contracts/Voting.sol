@@ -180,7 +180,7 @@ contract Voting {
   function castVote(uint _pollID, bytes _encryptedVote, uint _weight) external validPoll(_pollID) {
     require(getPollStatus(_pollID) == PollStatus.IN_PROGRESS, "Poll has expired.");
     require(!userHasVoted(_pollID, msg.sender), "User has already voted.");
-    //require(getPollExpirationTime(_pollID) > now);
+    require(getPollExpirationTime(_pollID) > now);
     require(getTokenStake(msg.sender) >= _weight, "User does not have enough staked tokens.");
 
     // update token bank
