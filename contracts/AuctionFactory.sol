@@ -31,6 +31,9 @@ contract AuctionFactory {
     emit newAuction(auction);
   }
 
+  /*
+   * Get every auction address created.
+   */
   function getAuctionAddresses() public view returns (address[]) {
     return auctions;
   }

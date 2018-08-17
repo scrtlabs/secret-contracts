@@ -1,6 +1,7 @@
 // Token.js, Andrew Tam
 
 import React, { Component } from 'react';
+import Alert from './Alert.js'
 import '../App.css';
 
 // Material UI Components
@@ -33,6 +34,7 @@ class Token extends Component {
     this.curTokenPurchase;
     this.withdrawValue;
     this.stakeAmount;
+    this.alert = React.createRef();
     this.tokenPurchase = this.tokenPurchase.bind(this);
     this.withdraw = this.withdraw.bind(this);
     this.stakeTokens = this.stakeTokens.bind(this);
@@ -58,11 +60,11 @@ class Token extends Component {
       balances[this.props.curAccount] = parseInt(this.props.tokenBalances[this.props.curAccount]) + parseInt(this.curTokenPurchase.value);
       this.props.updateToken(balances);
 
-      alert('You purchased '+ this.curTokenPurchase.value + ' tokens.');
+      this.alert.current.openAlert("You have successfully purchased tokens.");
       document.getElementById("token_form").reset();
     })
     .catch(error => {
-      alert("User does not have enough Ether. Please enter a smaller amount.");
+      this.alert.current.openAlert("User does not have enough Ether. Please enter a smaller amount.");
     })
   }
 
@@ -88,12 +90,12 @@ class Token extends Component {
       this.props.updateStake(staked);
 
 
-      alert("You have successfully withdrawn tokens.");
+      this.alert.current.openAlert("You have successfully withdrawn tokens.");
       document.getElementById("withdraw_form").reset();
     })
     .catch(error => {
       console.log(error);
-      alert("You are trying to withdraw too many tokens.");
+      this.alert.current.openAlert("You are trying to withdraw too many tokens.");
     })
   }
 
@@ -126,12 +128,12 @@ class Token extends Component {
       staked[this.props.curAccount] += parseInt(this.stakeAmount.value)
       this.props.updateStake(staked);
 
-      alert("You have successfully staked tokens.");
+      this.alert.current.openAlert("You have successfully staked tokens.");
       document.getElementById("stake_form").reset();
     })
     .catch(error => {
       console.log(error);
-      alert("You are trying to stake too many tokens.");
+      this.alert.current.openAlert("You are trying to stake too many tokens.");
     })
   }
 
@@ -170,6 +172,7 @@ class Token extends Component {
         </ListItem>
       </List>
 
+      <Alert ref={this.alert}/>
       </div>
     )
   }

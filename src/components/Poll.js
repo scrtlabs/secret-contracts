@@ -1,6 +1,7 @@
 // Poll.js, Andrew Tam
 
 import React, { Component } from 'react';
+import Alert from './Alert.js'
 import '../App.css';
 
 // Material UI Components
@@ -32,15 +33,16 @@ class Poll extends Component {
   /* CONSTRUCTOR */
   constructor(props) {
     super(props);
-    this.newPoll = this.newPoll.bind(this);
-    this.endPoll = this.endPoll.bind(this);
-    this.enigmaTask = this.enigmaTask.bind(this);
-    this.getPollStatus = this.getPollStatus.bind(this);
     this.curQuorumPct;
     this.curPollDescription;
     this.endPollID;
     this.statusPollID;
     this.votingPeriod
+    this.newPoll = this.newPoll.bind(this);
+    this.endPoll = this.endPoll.bind(this);
+    this.enigmaTask = this.enigmaTask.bind(this);
+    this.getPollStatus = this.getPollStatus.bind(this);
+    this.alert = React.createRef();
   }
 
   /*
@@ -57,11 +59,11 @@ class Poll extends Component {
     .then(result => {
       // update the App state
       this.props.update();
-      alert("Poll was created!");
+      this.alert.current.openAlert("Poll was created!");
       document.getElementById("new_form").reset();
     })
     .catch(error => {
-      alert("Unable to create poll. The quorum percentage must be less than or equal to 100.");
+      this.alert.current.openAlert("Unable to create poll. The quorum percentage must be less than or equal to 100.");
     })
   }
 
@@ -78,12 +80,12 @@ class Poll extends Component {
     .then(result => {
       // call the helper function to create an Enigma task
       this.enigmaTask(parseInt(this.endPollID.value));
-      alert("The poll was successfully ended and an Enigma task will be created.");
+      this.alert.current.openAlert("The poll was successfully ended and an Enigma task will be created.");
       document.getElementById("end_form").reset();
     })
     .catch(error => {
       console.log(error);
-      alert("Unable to end poll. Either the voting period has not expired or you are not the creator of the original poll.");
+      this.alert.current.openAlert("Unable to end poll. Either the voting period has not expired or you are not the creator of the original poll.");
     })
 
   }
@@ -174,21 +176,21 @@ class Poll extends Component {
     .then(result => {
       let status = result.toNumber();
       if (status == 0) {
-        alert("Poll is in progress.");
+        this.alert.current.openAlert("Poll is in progress.");
       }
       else if (status == 1) {
-        alert("The votes are being tallied right now...");
+        this.alert.current.openAlert("The votes are being tallied right now...");
       }
       else if (status == 2) {
-        alert("The poll was passed!");
+        this.alert.current.openAlert("The poll was passed!");
       }
       else {
-        alert("The poll was rejected.");
+        this.alert.current.openAlert("The poll was rejected.");
       }
       document.getElementById("status_form").reset();
     })
     .catch(error => {
-      alert("Invalid poll ID entered.");
+      this.alert.current.openAlert("Invalid poll ID entered.");
     })
   }
 
@@ -230,6 +232,7 @@ class Poll extends Component {
             </form>
           </ListItem>
         </List>
+        <Alert ref={this.alert}/>
       </div>
     )
   }

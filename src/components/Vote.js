@@ -1,6 +1,7 @@
 // Vote.js, Andrew Tam
 
 import React, { Component } from 'react';
+import Alert from './Alert.js'
 import '../App.css';
 
 // Material UI Components
@@ -32,6 +33,7 @@ class Vote extends Component {
     this.curVote;
     this.curWeight;
     this.votePollID;
+    this.alert = React.createRef();
     this.vote = this.vote.bind(this);
   }
 
@@ -54,12 +56,12 @@ class Vote extends Component {
     })
     .then(result => {
       // update app state
+      this.alert.current.openAlert("Vote casted!");
       document.getElementById("vote_form").reset();
-      alert('Vote casted!');
     })
     .catch(error => {
+      this.alert.current.openAlert("Unable to cast vote. Either you have already voted, the poll has ended, or your parameters are invalid.");
       console.log(error);
-      alert("Unable to cast vote. Either you have already voted, the poll has ended, or your parameters are invalid.");
     })
   }
 
@@ -74,7 +76,7 @@ class Vote extends Component {
             <form onSubmit={this.vote} id="vote_form">
               <label> Enter 0 to cast a "no" vote and enter 1 to cast a "yes" vote. Weight refers to the number
                       of voting credits that you will use.
-              </label> <br />  <br /> 
+              </label> <br />  <br />
               Vote:
               <TextField className={classes.textField} placeholder="Value" inputRef={element => this.curVote = element}/>
               <TextField className={classes.textField} placeholder="Weight" inputRef={element => this.curWeight = element}/>
@@ -84,6 +86,7 @@ class Vote extends Component {
           </ListItem>
         </List>
 
+        <Alert ref={this.alert}/>
       </div>
     )
   }
