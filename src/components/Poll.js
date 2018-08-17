@@ -1,12 +1,31 @@
 // Poll.js, Andrew Tam
 
 import React, { Component } from 'react';
-import './App.css';
+import '../App.css';
+
+// Material UI Components
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import Divider from '@material-ui/core/Divider';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 const CALLABLE = 'countVotes(uint,uint[],uint[])';
 const CALLBACK = 'updatePollStatus(uint,uint,uint)';
 const ENG_FEE = 1;
 const GAS = 4712388;
+
+const styles = theme => ({
+  button: {
+    marginLeft: '10px'
+  },
+  textField: {
+    marginLeft: '10px',
+    width: '160px'
+  }
+});
 
 class Poll extends Component {
 
@@ -174,36 +193,50 @@ class Poll extends Component {
   }
 
   render() {
+    const { classes } = this.props;
     return (
       <div>
         <h3> Poll Operations: </h3>
-        <form onSubmit={this.newPoll} id="new_form">
-          <label> Create a new poll with quorum percentage </label>
-          <input type="text" ref={(element) => { this.curQuorumPct = element }} />
-          <label> poll description </label>
-          <input type="text" ref={(element) => { this.curPollDescription = element }} />
-          <label> and voting period: (enter number of seconds): </label>
-          <input type="text" ref={(element) => { this.votingPeriod = element }} />
-          <button> New Poll </button>
-        </form>
-        <br />
 
-        <form onSubmit={this.endPoll} id="end_form">
-          <label> End poll with poll ID: </label>
-          <input type="text" ref={(element) => { this.endPollID = element }} />
-          <button> End Poll </button>
-        </form>
-        <br />
+        <List component="nav" disablePadding={true}>
+          <ListItem>
+            <form onSubmit={this.newPoll} id="new_form">
+              <label> Create a new poll: </label>
+              <br />
+              <TextField className={classes.textField} placeholder="Quorum Percentage" inputRef={element => this.curQuorumPct = element}/>
+              <br />
+              <TextField className={classes.textField} placeholder="Poll Description" inputRef={element => this.curPollDescription = element}/>
+              <br />
+              <TextField className={classes.textField} placeholder="Voting Period (seconds)" inputRef={element => this.votingPeriod = element}/>
+              <Button className={classes.button} type="submit" variant="outlined" size="small">New Poll</Button>
+              </form>
+          </ListItem>
+          <Divider />
 
-        <form onSubmit={this.getPollStatus} id="status_form">
-          <label> Get the status of the poll with ID: </label>
-          <input type="text" ref={(element) => { this.statusPollID = element }} />
-          <button> Get Status </button>
-        </form>
+          <ListItem>
+            <form onSubmit={this.endPoll} id="end_form">
+              <label> End poll: </label>
+              <TextField className={classes.textField} placeholder="Poll ID" inputRef={element => this.endPollID = element}/>
+              <Button className={classes.button} type="submit" variant="outlined" size="small">End Poll</Button>
+            </form>
+          </ListItem>
+          <Divider />
+
+          <ListItem>
+            <form onSubmit={this.getPollStatus} id="status_form">
+              <label> Get the status of poll: </label>
+              <TextField className={classes.textField} placeholder="Poll ID" inputRef={element => this.statusPollID = element}/>
+              <Button className={classes.button} type="submit" variant="outlined" size="small">Get Status</Button>
+            </form>
+          </ListItem>
+        </List>
       </div>
     )
   }
 }
 
+Poll.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
 
-export default Poll;
+export default withStyles(styles)(Poll);

@@ -1,8 +1,8 @@
 {
   "contractName": "ActionAuction",
   "abi": [],
-  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3006080604052600080fd00a165627a7a72305820833e706c24ec91c3fa3d27d065d0d2bcd352f0f533bcd0d7b611f260423f2a290029",
-  "deployedBytecode": "0x6080604052600080fd00a165627a7a72305820833e706c24ec91c3fa3d27d065d0d2bcd352f0f533bcd0d7b611f260423f2a290029",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3006080604052600080fd00a165627a7a72305820aef587ff0b0c46615854268fd8f9f7192388d0a57acb5af4888a42572cfff9d50029",
+  "deployedBytecode": "0x6080604052600080fd00a165627a7a72305820aef587ff0b0c46615854268fd8f9f7192388d0a57acb5af4888a42572cfff9d50029",
   "sourceMap": "84:27:0:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;84:27:0;;;;;;;",
   "deployedSourceMap": "84:27:0:-;;;;;",
   "source": "// ActionAuction.sol, Andrew Tam\n\npragma solidity ^0.4.24;\n\nimport \"./Enigma.sol\";\n\ncontract ActionAuction {\n\n}\n",
@@ -115,5 +115,5 @@
   },
   "networks": {},
   "schemaVersion": "2.0.1",
-  "updatedAt": "2018-08-15T21:02:54.066Z"
+  "updatedAt": "2018-08-16T18:57:46.751Z"
 }

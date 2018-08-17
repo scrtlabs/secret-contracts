@@ -61,7 +61,7 @@ async function testAuction() {
   let auctionAddress;
 
   console.log("Create auction");
-  return auctionFactoryContract.createAuction(10, {
+  return auctionFactoryContract.createAuction(10, web3.utils.toWei(String(1)), {
     from: auctionAccounts[0],
     gas: GAS
   })
@@ -74,21 +74,37 @@ async function testAuction() {
       auctionAddress = result[0];
       auctionContract = Auction.at(auctionAddress);
 
-      encryptedBids.push(10);
+      // stake in contract
+      return auctionContract.stake({
+        from: auctionAccounts[0],
+        gas: GAS,
+        value: web3.utils.toWei(String(1))
+      });
+    })
+    .then(result => {
+      // stake in contract
+      return auctionContract.stake({
+        from: auctionAccounts[1],
+        gas: GAS,
+        value: web3.utils.toWei(String(2))
+      });
+    })
+    .then(result => {
+      encryptedBids.push(1);
       addresses.push(auctionAccounts[0]);
 
       console.log("Bid from account 0");
-      return auctionContract.bid(10, {
+      return auctionContract.bid(web3.utils.toWei(String(1)), {
         from: auctionAccounts[0], gas: GAS
       });
     })
     .then(result => {
 
-      encryptedBids.push(20);
+      encryptedBids.push(2);
       addresses.push(auctionAccounts[1]);
 
       console.log("Bid from account 1");
-      return auctionContract.bid(20, {
+      return auctionContract.bid(web3.utils.toWei(String(2)), {
         from: auctionAccounts[1], gas: GAS
       });
     })
@@ -110,7 +126,8 @@ async function testAuction() {
         blockNumber,
         auctionAddress,
         CALLABLE,
-        [addresses, encryptedBids],
+        //[addresses, encryptedBids],
+        [['0x74733e055434b3a56acfab99bfec9ebd8d6c0de6'], [1]],
         CALLBACK,
         ENG_FEE,
         []

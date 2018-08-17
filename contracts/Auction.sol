@@ -28,12 +28,10 @@ contract Auction {
   uint public startingPrice;
   uint public winningPrice;
   mapping(address => Bidder) public bidders;
+  mapping(address => uint) stakeAmounts;
   address[] public bidderAddresses;
   Enigma public enigma;
   AuctionState public state;
-
-  // testing
-  mapping(address => uint) stakeAmounts;
 
   /* CONSTRUCTOR */
   constructor(address _owner, uint _auctionLength, uint _startingPrice, address _enigma) public {

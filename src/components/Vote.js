@@ -1,10 +1,28 @@
 // Vote.js, Andrew Tam
 
 import React, { Component } from 'react';
-import './App.css';
+import '../App.css';
 
-const engUtils = require('../enigma-lib/enigma-utils');
+// Material UI Components
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+
+const engUtils = require('../../enigma-lib/enigma-utils');
 const GAS = 4712388;
+
+const styles = theme => ({
+  button: {
+    marginLeft: '10px'
+  },
+  textField: {
+    marginLeft: '20px',
+    width: '75px'
+  }
+});
 
 class Vote extends Component {
 
@@ -46,21 +64,26 @@ class Vote extends Component {
   }
 
   render() {
+    const { classes } = this.props;
     return (
       <div>
         <h3> Voting Operations: </h3>
-        <p> Enter a 0 for "no" and a 1 for "yes". Weight refers to the number of voting tokens that you will use. </p>
-        <form onSubmit={this.vote} id="vote_form">
-          <label> Vote with value </label>
-          <input type="text" ref={(element) => { this.curVote = element }} />
 
-          <label> and weight </label>
-          <input type="text" ref={(element) => { this.curWeight = element }} />
+        <List component="nav" disablePadding={true}>
+          <ListItem>
+            <form onSubmit={this.vote} id="vote_form">
+              <label> Enter 0 to cast a "no" vote and enter 1 to cast a "yes" vote. Weight refers to the number
+                      of voting credits that you will use.
+              </label> <br />  <br /> 
+              Vote:
+              <TextField className={classes.textField} placeholder="Value" inputRef={element => this.curVote = element}/>
+              <TextField className={classes.textField} placeholder="Weight" inputRef={element => this.curWeight = element}/>
+              <TextField className={classes.textField} placeholder="Poll ID" inputRef={element => this.votePollID = element}/>
+              <Button className={classes.button} type="submit" variant="outlined" size="small">Vote</Button>
+            </form>
+          </ListItem>
+        </List>
 
-          <label> in poll with poll ID: </label>
-          <input type="text" ref={(element) => { this.votePollID = element }} />
-          <button> Vote </button>
-        </form>
       </div>
     )
   }
@@ -76,4 +99,8 @@ function getEncryptedVote(vote) {
 }
 
 
-export default Vote;
+Vote.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(Vote);

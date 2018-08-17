@@ -4,11 +4,45 @@
 
 // Import helper components
 import EnigmaSetup from './utils/getContracts';
-import Token from './Token';
-import Poll from './Poll';
-import Vote from './Vote';
+import Token from './components/Token';
+import Poll from './components/Poll';
+import Vote from './components/Vote';
+import Instructions from './components/Instructions'
 import React, { Component } from 'react';
 import './App.css';
+
+// Material UI Components
+import PropTypes from 'prop-types';
+import { withStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: '#000000'
+    },
+    secondary: {
+      main: '#FFFFFF'
+    }
+  },
+  typography: {
+    fontFamily: '"Titillium Web"'
+  }
+});
+
+const styles = theme => ({
+  root: {
+    flexGrow: 1,
+  },
+  paper: {
+    color: "primary"
+  }
+});
 
 class App extends Component {
 
@@ -69,46 +103,77 @@ class App extends Component {
    * React render function.
    */
   render() {
+    const { classes } = this.props;
+
     // wait for web3 and the contracts to be set up
     if (!this.state.contractsObj) {
       return <div> Loading web3... </div>
     }
     return(
+      <MuiThemeProvider theme={theme}>
       <div className="App">
-        <hr />
-        <div id="dashboard">
-        <h3> Dashboard: </h3>
-          <label> Current Poll ID: {this.state.curPoll} </label> <br />
-          <label>
-            Current Ganache Account:
-            <select value={this.state.curAccount} onChange={this.accountChange}>
-              <option value="0">0</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-            </select>
-          </label> <br />
-          <label> Current Token Balance: {this.state.tokenBalances[this.state.curAccount]} </label>< br />
-          <label> Number of Staked Tokens: {this.state.stakedTokens[this.state.curAccount]} </label>
-        </div>
-        <hr />
-
-        <Token objects={this.state.contractsObj} updateToken={this.changeTokenBalances} updateStake={this.changeStakedTokens}
-          tokenBalances={this.state.tokenBalances} stakedTokens={this.state.stakedTokens} curAccount={this.state.curAccount}/>
-        <hr />
-        <Poll objects={this.state.contractsObj} update={this.incrementCurPoll} tokenBalances={this.state.tokenBalances} curAccount={this.state.curAccount} />
-        <hr />
-        <Vote objects={this.state.contractsObj} update={this.changeTokenBalances} tokenBalances={this.state.tokenBalances} curAccount={this.state.curAccount} />
-        <hr />
+        <Instructions />
+        <Grid item xs={12}>
+          <Paper>
+            <div id="dashboard">
+              <h3> Dashboard: </h3>
+                <List style={{ display: 'flex', flexDirection: 'row'}}>
+                <Grid item xs={3}>
+                  <label> Current Poll ID: {this.state.curPoll} </label> <br />
+                </Grid>
+                <Grid item xs={3}>
+                  <label>
+                    Current Ganache Account:
+                    <Select value={this.state.curAccount} onChange={this.accountChange} style={{ marginLeft: '10px' }}>
+                      <MenuItem value={0}>0</MenuItem>
+                      <MenuItem value={1}>1</MenuItem>
+                      <MenuItem value={2}>2</MenuItem>
+                      <MenuItem value={3}>3</MenuItem>
+                      <MenuItem value={4}>4</MenuItem>
+                      <MenuItem value={5}>5</MenuItem>
+                      <MenuItem value={6}>6</MenuItem>
+                      <MenuItem value={7}>7</MenuItem>
+                      <MenuItem value={8}>8</MenuItem>
+                    </Select>
+                  </label>
+                </Grid>
+                <Grid item xs={3}>
+                  <label> Current Token Balance: {this.state.tokenBalances[this.state.curAccount]} </label>
+                </Grid>
+                <Grid item xs={3}>
+                  <label> Number of Staked Tokens: {this.state.stakedTokens[this.state.curAccount]} </label>
+                </Grid>
+              </List>
+            </div>
+          </Paper>
+        </Grid>
+        <Grid container className={classes.root} spacing={16}>
+          <Grid item xs={4}>
+            <Paper className={classes.paper}>
+              <Token objects={this.state.contractsObj} updateToken={this.changeTokenBalances} updateStake={this.changeStakedTokens}
+              tokenBalances={this.state.tokenBalances} stakedTokens={this.state.stakedTokens} curAccount={this.state.curAccount}/>
+            </Paper>
+          </Grid>
+          <Grid item xs={4}>
+            <Paper className={classes.paper}>
+              <Poll objects={this.state.contractsObj} update={this.incrementCurPoll} tokenBalances={this.state.tokenBalances} curAccount={this.state.curAccount} />
+            </Paper>
+          </Grid>
+          <Grid item xs={4}>
+            <Paper className={classes.paper}>
+              <Vote objects={this.state.contractsObj} update={this.changeTokenBalances} tokenBalances={this.state.tokenBalances} curAccount={this.state.curAccount} />
+            </Paper>
+          </Grid>
+        </Grid>
       </div>
+      </MuiThemeProvider>
     );
   }
 }
 
+App.propTypes = {
+  classes: PropTypes.object.isRequired
+};
 
-export default App;
+
+export default withStyles(styles)(App);

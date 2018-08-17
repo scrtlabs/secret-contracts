@@ -1,9 +1,29 @@
 // Token.js, Andrew Tam
 
 import React, { Component } from 'react';
-import './App.css';
+import '../App.css';
+
+// Material UI Components
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import Divider from '@material-ui/core/Divider';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 const GAS = 4712388;
+
+const styles = theme => ({
+  button: {
+    marginLeft: '10px'
+  },
+  textField: {
+    marginLeft: '10px',
+    width: '90px'
+  }
+});
+
 
 class Token extends Component {
 
@@ -23,6 +43,7 @@ class Token extends Component {
    */
   tokenPurchase(event){
     if (event) event.preventDefault();
+
     // Contribute to the Mintable Token Factory
     console.log("Contribute to the crowdsale");
     this.props.objects.TokenFactory.contribute({
@@ -115,27 +136,39 @@ class Token extends Component {
   }
 
   render() {
+    const { classes } = this.props;
     return(
       <div>
         <h3> Tokens Operations: </h3>
+        <List component="nav" disablePadding={true}>
+        <ListItem>
 
-        <form onSubmit={this.tokenPurchase} id="token_form">
-          <label> Insert the number of Voting Tokens you would like to purchase: </label>
-          <input type="text" ref={(element) => { this.curTokenPurchase = element }} />
-          <button> Submit </button>
-        </form> <br />
+          <form onSubmit={this.tokenPurchase} id="token_form">
+            <label> Purchase voting tokens: </label>
+            <TextField className={classes.textField} placeholder="Amount" inputRef={element => this.curTokenPurchase = element}/>
+            <Button className={classes.button} type="submit" variant="outlined" size="small">Purchase</Button>
+          </form>
 
-        <form onSubmit={this.stakeTokens} id="stake_form">
-          <label> Insert the number of Voting Tokens you would like to stake: </label>
-          <input type="text" ref={(element) => { this.stakeAmount = element }} />
-          <button> Submit </button>
-        </form> <br />
+        </ListItem>
+        <Divider />
 
-        <form onSubmit={this.withdraw} id="withdraw_form">
-          <label> Insert the number of Voting Tokens you would like to withdraw: </label>
-          <input type="text" ref={(element) => { this.withdrawValue = element }} />
-          <button> Submit </button>
-        </form>
+        <ListItem>
+          <form onSubmit={this.stakeTokens} id="stake_form">
+            <label> Stake voting tokens: </label>
+            <TextField className={classes.textField} placeholder="Amount" inputRef={element => this.stakeAmount = element}/>
+            <Button className={classes.button} type="submit" variant="outlined" size="small">Stake</Button>
+            </form>
+        </ListItem>
+        <Divider />
+
+        <ListItem>
+          <form onSubmit={this.withdraw} id="withdraw_form">
+            <label> Withdraw voting tokens: </label>
+            <TextField className={classes.textField} placeholder="Amount" inputRef={element => this.withdrawValue = element}/>
+            <Button className={classes.button} type="submit" variant="outlined" size="small">Withdraw</Button>
+            </form>
+        </ListItem>
+      </List>
 
       </div>
     )
@@ -143,4 +176,8 @@ class Token extends Component {
 
 }
 
-export default Token;
+Token.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(Token);
