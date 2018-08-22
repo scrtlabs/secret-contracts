@@ -10,6 +10,7 @@ const data = require('../data/data');
 // Auctions
 const Auction = artifacts.require("./Auction.sol");
 const AuctionFactory = artifacts.require("./AuctionFactory.sol");
+const EnigmaCollectible = artifacts.require("./EnigmaCollectible.sol");
 
 module.exports = function(deployer) {
   return deployer
@@ -21,7 +22,10 @@ module.exports = function(deployer) {
       return deployer.deploy(Enigma, EnigmaToken.address, principal);
     })
     .then(() => {
-      return deployer.deploy(AuctionFactory, Enigma.address);
+      return deployer.deploy(EnigmaCollectible, "Enigma Collectible", "ENGC");
+    })
+    .then(() => {
+      return deployer.deploy(AuctionFactory, Enigma.address, EnigmaCollectible.address);
     })
     .then(() => {
       return deployer.deploy(VotingToken);
@@ -33,7 +37,7 @@ module.exports = function(deployer) {
       return deployer.deploy(Voting, VotingToken.address, Enigma.address);
     })
     .then(() => {
-      return VotingToken.deployed().then(instance => instance.transferOwnership(TokenFactory.address))
+      return VotingToken.deployed().then(instance => instance.transferOwnership(TokenFactory.address));
     })
     .then(() => {
       return deployer.deploy(Registry, VotingToken.address, Voting.address, "Enigma Registry");

@@ -1,9 +1,9 @@
 // Auction.sol, Andrew Tam
-// Need to finish claimReward function
 
 pragma solidity ^0.4.24;
 
 import "./Enigma.sol";
+import "./EnigmaCollectible.sol";
 
 contract Auction {
 
@@ -28,18 +28,21 @@ contract Auction {
   uint public startingPrice;
   uint public winningPrice;
   mapping(address => Bidder) public bidders;
-  mapping(address => uint) stakeAmounts;
+  mapping(address => uint) public stakeAmounts;
   address[] public bidderAddresses;
   Enigma public enigma;
+  EnigmaCollectible public enigmaCollectible;
   AuctionState public state;
+  bool rewardClaimed;
 
   /* CONSTRUCTOR */
-  constructor(address _owner, uint _auctionLength, uint _startingPrice, address _enigma) public {
+  constructor(address _owner, uint _auctionLength, uint _startingPrice, address _enigma, address _enigmaCollectible) public {
     owner = _owner;
     startingPrice = _startingPrice;
     startTime = now;
     endTime = startTime + _auctionLength * 1 seconds;
     enigma = Enigma(_enigma);
+    enigmaCollectible = EnigmaCollectible(_enigmaCollectible);
     state = AuctionState.IN_PROGRESS;  // redundant
   }
 
@@ -54,19 +57,16 @@ contract Auction {
   /*
    * Withdraw Ether after the bidding period has ended.
    */
-  function withdraw(uint _amount) external {
+  function withdraw() external {
     require(state == AuctionState.COMPLETED);
-    if (msg.sender == winner) {
-      require(_amount <= stakeAmounts[msg.sender] - winningPrice);
-    }
-    else {
-      require(_amount <= stakeAmounts[msg.sender]);
-    }
-    msg.sender.transfer(_amount);
+    require(stakeAmounts[msg.sender] > 0);
+    uint amount = stakeAmounts[msg.sender];
+    stakeAmounts[msg.sender] = 0;
+    msg.sender.transfer(amount);
   }
 
   /*
-   * Bid in the auction. The value of the bid is encrypted and is denoted in wei.
+   * Bid in the auction. The value of the bid(in wei) is encrypted.
    * NOTE: A user can bid multiple times as long as it's within the bidding period.
    */
   function bid(bytes _bidValue) external {
@@ -82,8 +82,7 @@ contract Auction {
   /*
    * End the auction. Only the creator of the auction can end the auction(when the bidding period has expired).
    */
-  function endAuction() external {
-    require(msg.sender == owner);
+  function endAuction() external isOwner {
     require(state == AuctionState.IN_PROGRESS);
     //require(now >= endTime);
     state = AuctionState.CALCULATING;
@@ -94,8 +93,8 @@ contract Auction {
    * NOTE: In the event of a tie, we're just taking the first bidder.
    */
   function getHighestBidder(address[] _bidders, uint[] _bidAmounts, uint[] _stakeAmounts) public pure returns (address, uint) {
-    address highestBidder;
-    uint highestBidAmount;
+    address highestBidder = 0;
+    uint highestBidAmount = 0;
     for (uint i = 0; i < _bidders.length; i++) {
       if ((_bidAmounts[i] > highestBidAmount) && (_bidAmounts[i] <= _stakeAmounts[i])) {
         highestBidAmount = _bidAmounts[i];
@@ -114,17 +113,28 @@ contract Auction {
     winner = _highestBidder;
     winningPrice = _highestBidAmount;
     state = AuctionState.COMPLETED;
+    stakeAmounts[_highestBidder] -= winningPrice;
     emit Winner(_highestBidder, _highestBidAmount);
   }
 
   /*
    * Allow a user to claim their reward.
-   * Need a flag on whether the winner has withdrawn the reward
    */
   function claimReward() external {
     require(state == AuctionState.COMPLETED);
     require(msg.sender == winner);
-    // insert reward transfer here.
+    require(!rewardClaimed);
+    // mint an ERC721 Enigma Collectible with arbitrary tokenID(just use the end time)
+    rewardClaimed = true;
+    enigmaCollectible.mintToken(msg.sender, endTime);
+  }
+
+  /*
+   * Allow the creator of the auction to claim the winner's stake.
+   */
+  function claimEther() external isOwner {
+    require(state == AuctionState.COMPLETED);
+    msg.sender.transfer(winningPrice);
   }
 
   /*
@@ -132,6 +142,14 @@ contract Auction {
    */
   modifier onlyEnigma() {
     require(msg.sender == address(enigma));
+    _;
+  }
+
+  /*
+   * Modifier that checks if the caller is the creator of the auction.
+   */
+  modifier isOwner() {
+    require(msg.sender == owner);
     _;
   }
 
@@ -151,7 +169,7 @@ contract Auction {
   }
 
   /*
-   * Get the staked amount of Ether for a given bidder.
+   * Get the staked Ether amount for a given bidder.
    */
   function getStakeOfBidder(address _bidder) public view returns (uint) {
     return stakeAmounts[_bidder];

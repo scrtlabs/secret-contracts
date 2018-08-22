@@ -23,7 +23,7 @@ const provider = new Web3.providers.HttpProvider (url);
 const web3 = new Web3 (provider);
 
 // callable and callback can't have any whitespace
-const CALLABLE = 'getHighestBidder(address[],uint[])';
+const CALLABLE = 'getHighestBidder(address[],uint[],uint[])';
 const CALLBACK = 'updateWinner(address,uint)';
 const ENG_FEE = 1;
 const GAS = 4712388;
@@ -127,7 +127,7 @@ async function testAuction() {
         auctionAddress,
         CALLABLE,
         //[addresses, encryptedBids],
-        [['0x74733e055434b3a56acfab99bfec9ebd8d6c0de6'], [1]],
+        [['0x74733e055434b3a56acfab99bfec9ebd8d6c0de6'], [1], [1]],
         CALLBACK,
         ENG_FEE,
         []

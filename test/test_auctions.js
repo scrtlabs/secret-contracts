@@ -26,7 +26,7 @@ contract('AuctionFactory', async(accounts) => {
 
       await auction.stake({
         from: web3.eth.accounts[1],
-        value: web3.toWei(2)
+        value: web3.toWei(5)
       });
 
       // make first bid
@@ -57,8 +57,15 @@ contract('AuctionFactory', async(accounts) => {
       assert.equal(web3.eth.accounts[1], checkWinner);
 
       // withdraw
-      await auction.withdraw(web3.toWei(1), {from:web3.eth.accounts[0]});
+      await auction.withdraw({from:web3.eth.accounts[0]});
+      await auction.withdraw({from:web3.eth.accounts[1]});
 
+      // claim winnings
+      await auction.claimReward({from:web3.eth.accounts[1]});
+      await auction.claimEther({from:web3.eth.accounts[0]});
+
+      let balance = await web3.eth.getBalance(auctionAddress[0]);
+      assert.equal(balance.toNumber(), 0);
     });
   })
 })
