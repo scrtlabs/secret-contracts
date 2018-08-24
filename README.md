@@ -1,12 +1,11 @@
 # Secret Contracts
 
-This repository showcases example secret contracts such as secret voting, secret auctions, and secret TCRs. This repository is very much a work in progress and expect it to be updated almost daily.
+This repository showcases example secret contracts such as secret voting and secret auctions. This repository is very much a work in progress and expect it to be updated almost daily.
 
 # Design Features:
 
 Voting: Locked token-weighting(similar to the PLCR model), support for multiple timed polls, custom quorum percentages.
 Auction: Simple sealed bid auction.
-TCRs: WIP
 
 # Instructions:
 
