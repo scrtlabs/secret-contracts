@@ -1,6 +1,6 @@
 // VotingToken.sol
-// VotingToken is an OpenZeppelin MintableToken that will act as a
-// voting token in our set of voting systems.
+// Enigma, 2018
+// Create an OpenZeppelin MintableToken that will act as a voting token.
 
 pragma solidity ^0.4.24;
 

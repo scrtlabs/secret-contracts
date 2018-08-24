@@ -1,4 +1,6 @@
 // EnigmaCollectible.sol
+// Enigma, 2018
+// Creates an ERC721 token using OpenZeppelin.
 
 pragma solidity ^0.4.24;
 

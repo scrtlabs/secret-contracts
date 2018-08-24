@@ -1,4 +1,6 @@
 // Auction.sol
+// Enigma, 2018
+// Implements a simple sealed bid auction.
 
 pragma solidity ^0.4.24;
 

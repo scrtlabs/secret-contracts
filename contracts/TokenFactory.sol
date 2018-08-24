@@ -1,5 +1,6 @@
 // TokenFactory.sol
-// Allow the voting tokens to be minted from a simple crowdsale.
+// Enigma, 2018
+// Mint voting tokens from a simple crowdsale.
 
 pragma solidity ^0.4.24;
 

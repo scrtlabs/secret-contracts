@@ -1,4 +1,6 @@
 // Raffle.sol
+// Enigma, 2018
+// Creates a raffle for an NFT.
 // UNTESTED
 
 pragma solidity ^0.4.24;

@@ -1,4 +1,6 @@
 // Voting.sol
+// Enigma, 2018
+// Implement secret voting.
 
 pragma solidity ^0.4.24;
 

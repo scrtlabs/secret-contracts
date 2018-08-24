@@ -1,4 +1,6 @@
 // AuctionPricer.sol
+// Enigma, 2018
+// Finds the initial bid price of an NFT. 
 // EXPERIMENTAL AND UNTESTED
 
 pragma solidity ^0.4.24;

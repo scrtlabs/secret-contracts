@@ -1,4 +1,6 @@
 // AuctionFactory.sol
+// Enigma, 2018
+// Proxy for deploying Auction contracts.
 
 pragma solidity ^0.4.24;
 
