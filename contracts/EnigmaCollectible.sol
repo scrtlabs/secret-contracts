@@ -1,4 +1,4 @@
-// EnigmaCollectible.sol, Andrew Tam
+// EnigmaCollectible.sol
 
 pragma solidity ^0.4.24;
 

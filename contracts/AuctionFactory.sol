@@ -1,15 +1,13 @@
-// AuctionFactory.sol, Andrew Tam
+// AuctionFactory.sol
 
 pragma solidity ^0.4.24;
 
 import "./Auction.sol";
-import "./ActionAuction.sol";
 
 contract AuctionFactory {
 
   /* EVENTS */
   event newAuction(address auction);
-  event newActionAuction(address auction);
 
   /* STATE VARIABLES */
   address[] public auctions;
@@ -18,8 +16,8 @@ contract AuctionFactory {
 
   /* CONSTRUCTOR */
   constructor(address _enigmaAddress, address _enigmaCollectibleAddress) public {
-    require(_enigmaAddress != 0 && address(enigmaAddress) == 0);
-    require(_enigmaCollectibleAddress != 0 && address(enigmaCollectibleAddress) == 0);
+    require(_enigmaAddress != 0 && enigmaAddress == 0);
+    require(_enigmaCollectibleAddress != 0 && enigmaCollectibleAddress == 0);
     enigmaAddress = _enigmaAddress;
     enigmaCollectibleAddress = _enigmaCollectibleAddress;
   }

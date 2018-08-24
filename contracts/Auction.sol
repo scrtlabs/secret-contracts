@@ -1,4 +1,4 @@
-// Auction.sol, Andrew Tam
+// Auction.sol
 
 pragma solidity ^0.4.24;
 
@@ -33,7 +33,7 @@ contract Auction {
   Enigma public enigma;
   EnigmaCollectible public enigmaCollectible;
   AuctionState public state;
-  bool rewardClaimed;
+  bool public rewardClaimed;
 
   /* CONSTRUCTOR */
   constructor(address _owner, uint _auctionLength, uint _startingPrice, address _enigma, address _enigmaCollectible) public {
@@ -93,8 +93,8 @@ contract Auction {
    * NOTE: In the event of a tie, we're just taking the first bidder.
    */
   function getHighestBidder(address[] _bidders, uint[] _bidAmounts, uint[] _stakeAmounts) public pure returns (address, uint) {
-    address highestBidder = 0;
-    uint highestBidAmount = 0;
+    address highestBidder;
+    uint highestBidAmount;
     for (uint i = 0; i < _bidders.length; i++) {
       if ((_bidAmounts[i] > highestBidAmount) && (_bidAmounts[i] <= _stakeAmounts[i])) {
         highestBidAmount = _bidAmounts[i];
@@ -108,7 +108,7 @@ contract Auction {
    * The callback function. Updates the contract state.
    */
   function updateWinner(address _highestBidder, uint _highestBidAmount) public
-    //onlyEnigma() comment this out for testing
+    //onlyEnigma comment this out for testing
     {
     winner = _highestBidder;
     winningPrice = _highestBidAmount;
@@ -125,7 +125,7 @@ contract Auction {
     require(msg.sender == winner);
     require(!rewardClaimed);
     rewardClaimed = true;
-    enigmaCollectible.mintToken(msg.sender, endTime);  // mint an ERC721 Enigma Collectible with arbitrary tokenID(just use the end time)
+    enigmaCollectible.mintToken(msg.sender, endTime);  // mint an ERC721 Enigma Collectible with arbitrary tokenID (just use the end time)
   }
 
   /*

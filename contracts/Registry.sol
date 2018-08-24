@@ -1,4 +1,4 @@
-// Registry.sol, Andrew Tam
+// Registry.sol
 // Heavily inspired from: https://github.com/skmgoldin/tcr/blob/master/contracts/Registry.sol
 // Notes:
 // -Currently no parameterizer

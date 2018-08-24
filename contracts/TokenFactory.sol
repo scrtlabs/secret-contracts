@@ -1,4 +1,4 @@
-// Andrew Tam, TokenFactory.sol
+// TokenFactory.sol
 // Allow the voting tokens to be minted from a simple crowdsale.
 
 pragma solidity ^0.4.24;

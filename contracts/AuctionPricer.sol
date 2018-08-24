@@ -1,5 +1,5 @@
-// AuctionPricer.sol, Andrew Tam
-// EXPERIMENTAL
+// AuctionPricer.sol
+// EXPERIMENTAL AND UNTESTED
 
 pragma solidity ^0.4.24;
 
@@ -12,9 +12,9 @@ contract AuctionPricer {
     bytes price;
   }
 
-  mapping(address => Pricer) pricers;
-  uint expireTime;
-  uint startingPrice;
+  mapping(address => Pricer) public pricers;
+  uint public expireTime;
+  uint public startingPrice;
   Enigma public enigma;
 
   constructor(address _enigma, uint _length) public {
@@ -26,7 +26,7 @@ contract AuctionPricer {
   function sendPrice(bytes _price) external {
     require(now < expireTime);
     require(!pricers[msg.sender].hasPriced);
-    pricers[msg.sender] = _price;
+    pricers[msg.sender].price = _price;
   }
 
   function getAveragePrice(uint[] _prices) public pure returns (uint) {
@@ -43,7 +43,7 @@ contract AuctionPricer {
 
   function getPriceforUser(address _user) public returns (bytes) {
     require(pricers[_user].hasPriced);
-    return pricers[_user];
+    return pricers[_user].price;
   }
 
   modifier onlyEnigma() {

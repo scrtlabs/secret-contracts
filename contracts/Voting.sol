@@ -1,5 +1,4 @@
 // Voting.sol
-// Author: Andrew Tam, 2018
 
 pragma solidity ^0.4.24;
 
