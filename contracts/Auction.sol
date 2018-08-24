@@ -124,9 +124,8 @@ contract Auction {
     require(state == AuctionState.COMPLETED);
     require(msg.sender == winner);
     require(!rewardClaimed);
-    // mint an ERC721 Enigma Collectible with arbitrary tokenID(just use the end time)
     rewardClaimed = true;
-    enigmaCollectible.mintToken(msg.sender, endTime);
+    enigmaCollectible.mintToken(msg.sender, endTime);  // mint an ERC721 Enigma Collectible with arbitrary tokenID(just use the end time)
   }
 
   /*
