@@ -9,7 +9,7 @@ Auction: Simple sealed bid auction.
 
 # Instructions:
 
-Follow the instructions here: https://docs.google.com/document/d/1mZGbbTukXyb6bRaw-GvEvVE7OWRfduuJgRfBXUpsHu8/edit?usp=sharing
+TBD, but check this out: https://github.com/enigmampc/enigma-docker-network
 
 # Important Notes:
 

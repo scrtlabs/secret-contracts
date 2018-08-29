@@ -1,6 +1,7 @@
 // Registry.sol
 // Enigma, 2018
 // Implements a simple token curated registry.
+// UNTESTED
 // Heavily inspired from: https://github.com/skmgoldin/tcr/blob/master/contracts/Registry.sol
 // Notes:
 // -Currently no parameterizer
