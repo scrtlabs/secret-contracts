@@ -1,6 +1,6 @@
 # Secret Contracts
 
-This repository showcases example secret contracts such as secret voting and secret auctions. This repository is very much a work in progress and expect it to be updated almost daily.
+This repository showcases example secret contracts such as secret voting and secret auctions.
 
 # Design Features:
 
@@ -10,6 +10,11 @@ Auction: Simple sealed bid auction.
 # Instructions:
 
 TBD, but check this out: https://github.com/enigmampc/enigma-docker-network
+
+Once you have the network running(and the contracts are deployed):
+1. Run npm install to install Node dependencies.
+2. Run npm start, which starts a webpack server at localhost:8080.
+4. Go to that URL and start testing the dApp!
 
 # Important Notes:
 
